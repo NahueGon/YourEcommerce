@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs;
 using YourEcommerceApi.DTOs.Category;
+using YourEcommerceApi.DTOs.Product;
 using YourEcommerceApi.DTOs.SubCategory;
 using YourEcommerceApi.Models;
 using YourEcommerceApi.Services.Interfaces;
@@ -29,15 +30,21 @@ public class CategoryService : ICategoryService
             Name = c.Name,
             Description = c.Description,
             Subcategories = c.Subcategories?
-                .Select(sc => new SubcategoryResponseDto
+                .Select(sc => new SubcategoryDto
                 {
                     Id = sc.Id,
                     Name = sc.Name,
                     Description = sc.Description,
-                    CategoryId = sc.CategoryId,
-                    CategoryName = sc.Category?.Name,
-                    Products = []
-                }).ToList() ?? new List<SubcategoryResponseDto>()
+                    Products = sc.Products?
+                     .Select(p => new ProductResponseDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Price = p.Price,
+                        Stock = p.Stock
+                    }).ToList() ?? new List<ProductResponseDto>()
+                }).ToList() ?? new List<SubcategoryDto>()
         });
     }
 
@@ -56,15 +63,21 @@ public class CategoryService : ICategoryService
             Name = category.Name,
             Description = category.Description,
             Subcategories = category.Subcategories?
-                .Select(sc => new SubcategoryResponseDto
+                .Select(sc => new SubcategoryDto
                 {
                     Id = sc.Id,
                     Name = sc.Name,
                     Description = sc.Description,
-                    CategoryId = sc.CategoryId,
-                    CategoryName = sc.Category?.Name,
-                    Products = []
-                }).ToList() ?? new List<SubcategoryResponseDto>()
+                    Products = sc.Products?
+                     .Select(p => new ProductResponseDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Price = p.Price,
+                        Stock = p.Stock
+                    }).ToList() ?? new List<ProductResponseDto>()
+                }).ToList() ?? new List<SubcategoryDto>()
         };
     }
 
@@ -84,7 +97,7 @@ public class CategoryService : ICategoryService
             Id = category.Id,
             Name = category.Name,
             Description = category.Description,
-            Subcategories = new List<SubcategoryResponseDto>()
+            Subcategories = new List<SubcategoryDto>()
         };
     }
 

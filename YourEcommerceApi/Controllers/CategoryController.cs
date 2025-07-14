@@ -52,9 +52,9 @@ namespace YourEcommerceApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var currentCategory = await _categoryService.Get(id);
+            var updated = await _categoryService.Get(id);
 
-            if (currentCategory == null)
+            if (updated == null)
                 return NotFound("Categoría no encontrada");
 
             await _categoryService.Update(id, categoryDto);
@@ -64,9 +64,9 @@ namespace YourEcommerceApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)
         {
-            var currentCategory = await _categoryService.Get(id);
+            var deleted = await _categoryService.Get(id);
 
-            if (currentCategory == null)
+            if (deleted == null)
                 return NotFound("Categoría no encontrada");
 
             await _categoryService.Delete(id);

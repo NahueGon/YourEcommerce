@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
+using YourEcommerceApi.DTOs.Category;
 using YourEcommerceApi.DTOs.Product;
 using YourEcommerceApi.DTOs.SubCategory;
 using YourEcommerceApi.Models;
@@ -27,16 +28,19 @@ public class SubcategoryService : ISubcategoryService
             Id = sc.Id,
             Name = sc.Name,
             Description = sc.Description,
-            CategoryId = sc.CategoryId,
-            CategoryName = sc.Category?.Name,
+            Category = new CategoryDto
+            {
+                Id = sc.CategoryId,
+                Name = sc.Category?.Name ?? string.Empty
+            },
             Products = sc.Products?
-                .Select(sc => new ProductResponseDto
+                .Select(p => new ProductResponseDto
                 {
-                    Id = sc.Id,
-                    Name = sc.Name,
-                    Description = sc.Description,
-                    Price = sc.Price,
-                    Stock = sc.Stock
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock
                 }).ToList() ?? new List<ProductResponseDto>()
         });
     }
@@ -56,16 +60,19 @@ public class SubcategoryService : ISubcategoryService
             Id = subcategory.Id,
             Name = subcategory.Name,
             Description = subcategory.Description,
-            CategoryId = subcategory.CategoryId,
-            CategoryName = subcategory.Category?.Name,
+            Category = new CategoryDto
+            {
+                Id = subcategory.CategoryId,
+                Name = subcategory.Category?.Name ?? string.Empty
+            },
             Products = subcategory.Products?
-                .Select(sc => new ProductResponseDto
+                .Select(p => new ProductResponseDto
                 {
-                    Id = sc.Id,
-                    Name = sc.Name,
-                    Description = sc.Description,
-                    Price = sc.Price,
-                    Stock = sc.Stock
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock
                 }).ToList() ?? new List<ProductResponseDto>()
         };
     }
@@ -92,8 +99,11 @@ public class SubcategoryService : ISubcategoryService
             Id = subcategory.Id,
             Name = subcategory.Name,
             Description = subcategory.Description,
-            CategoryId = category.Id,
-            CategoryName = category.Name,
+            Category = new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name
+            },
             Products = new List<ProductResponseDto>()
         };
     }
@@ -105,8 +115,15 @@ public class SubcategoryService : ISubcategoryService
         if (currentSubcategory == null)
             return false;
 
+        var newCategory = await _context.Categories.FindAsync(subcategoryDto.CategoryId);
+
+        if (newCategory == null)
+            return false;
+
         currentSubcategory.Name = subcategoryDto.Name;
         currentSubcategory.Description = subcategoryDto.Description;
+        currentSubcategory.Category = newCategory;
+        
         await _context.SaveChangesAsync();
 
         return true;

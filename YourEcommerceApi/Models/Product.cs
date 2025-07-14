@@ -1,3 +1,5 @@
+using YourEcommerceApi.DTOs.Product;
+
 namespace YourEcommerceApi.Models;
 
 public abstract class Product
@@ -18,4 +20,6 @@ public abstract class Product
 
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+    public abstract ProductResponseDto ToDto();
 }

@@ -45,5 +45,31 @@ namespace YourEcommerceApi.Controllers
             return CreatedAtAction(nameof(GetSubcategory), new { id = responseDto.Id }, responseDto);
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateSubcategory(int id, SubcategoryUpdateDto subcategoryDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var updated = await _subcategoryService.Get(id);
+
+            if (updated == null)
+                return NotFound("Subcategoría no encontrada");
+
+            await _subcategoryService.Update(id, subcategoryDto);
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteSubcategory(int id)
+        {
+            var deleted = await _subcategoryService.Get(id);
+
+            if (deleted == null)
+                return NotFound("Subcategoría no encontrada");
+
+            await _subcategoryService.Delete(id);
+            return NoContent();
+        }
     }
 }

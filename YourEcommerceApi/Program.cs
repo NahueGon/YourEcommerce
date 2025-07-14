@@ -14,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISubcategoryService, SubcategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<ISportService, SportService>();
 
 // Swageer
 builder.Services.AddEndpointsApiExplorer();
