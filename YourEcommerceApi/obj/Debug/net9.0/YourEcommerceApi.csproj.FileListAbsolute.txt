@@ -329,3 +329,7 @@ C:\projects\dotnet\YourEcommerce\YourEcommerceApi\obj\Debug\net9.0\refint\YourEc
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\obj\Debug\net9.0\YourEcommerceApi.pdb
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\obj\Debug\net9.0\YourEcommerceApi.genruntimeconfig.cache
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\obj\Debug\net9.0\ref\YourEcommerceApi.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Scrutor.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Annotations.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Filters.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll

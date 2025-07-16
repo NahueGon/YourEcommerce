@@ -6,7 +6,9 @@ public interface IProductService
 {
     Task<IEnumerable<ProductResponseDto>> GetAll();
     Task<ProductResponseDto?> Get(int id);
-    Task<ProductResponseDto> SaveAccessory(AccessoryCreateDto accesoryDto);
-    Task<ProductResponseDto> SaveShoe(ShoeCreateDto shoeDto);
+    Task<IEnumerable<ProductResponseDto>> GetAllByType(string type);
     Task<ProductResponseDto> SaveCloth(ClothCreateDto clothDto);
+    Task<ProductResponseDto> SaveShoe(ShoeCreateDto shoeDto);
+    Task<ProductResponseDto> SaveAccessory(AccessoryCreateDto accessoryDto);
+    Task<bool> Delete(int id);
 }

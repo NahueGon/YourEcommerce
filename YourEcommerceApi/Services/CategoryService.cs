@@ -3,6 +3,7 @@ using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs;
 using YourEcommerceApi.DTOs.Category;
 using YourEcommerceApi.DTOs.Product;
+using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.DTOs.SubCategory;
 using YourEcommerceApi.Models;
 using YourEcommerceApi.Services.Interfaces;
@@ -33,17 +34,7 @@ public class CategoryService : ICategoryService
                 .Select(sc => new SubcategoryDto
                 {
                     Id = sc.Id,
-                    Name = sc.Name,
-                    Description = sc.Description,
-                    Products = sc.Products?
-                     .Select(p => new ProductResponseDto
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Description = p.Description,
-                        Price = p.Price,
-                        Stock = p.Stock
-                    }).ToList() ?? new List<ProductResponseDto>()
+                    Name = sc.Name
                 }).ToList() ?? new List<SubcategoryDto>()
         });
     }
@@ -66,17 +57,7 @@ public class CategoryService : ICategoryService
                 .Select(sc => new SubcategoryDto
                 {
                     Id = sc.Id,
-                    Name = sc.Name,
-                    Description = sc.Description,
-                    Products = sc.Products?
-                     .Select(p => new ProductResponseDto
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Description = p.Description,
-                        Price = p.Price,
-                        Stock = p.Stock
-                    }).ToList() ?? new List<ProductResponseDto>()
+                    Name = sc.Name
                 }).ToList() ?? new List<SubcategoryDto>()
         };
     }

@@ -1,7 +1,15 @@
-﻿@page "/"
+﻿@inject IJSRuntime JS
 
-<PageTitle>Home</PageTitle>
+@page "/"
 
-<h1>Hello, world!</h1>
+<h3>Productos</h3>
 
-Welcome to your new app.
+<button @onclick="TestJsInterop">Probar JSInterop</button>
+
+@code {
+    private async Task TestJsInterop()
+    {
+        await JS.InvokeVoidAsync("alert", "JSInterop funciona!");
+    }
+}
+

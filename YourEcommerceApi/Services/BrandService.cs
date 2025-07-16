@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.Brand;
 using YourEcommerceApi.DTOs.Product;
+using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.Models;
 using YourEcommerceApi.Services.Interfaces;
 
@@ -28,14 +29,11 @@ public class BrandService : IBrandService
             Name = b.Name,
             Description = b.Description,
             Products = b.Products?
-                .Select(p => new ProductResponseDto
+                .Select(p => new ProductDto
                 {
                     Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).ToList() ?? new List<ProductResponseDto>()
+                    Name = p.Name
+                }).ToList() ?? new List<ProductDto>()
         });
     }
 
@@ -54,14 +52,11 @@ public class BrandService : IBrandService
             Name = brand.Name,
             Description = brand.Description,
             Products = brand.Products?
-                .Select(p => new ProductResponseDto
+                .Select(p => new ProductDto
                 {
                     Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).ToList() ?? new List<ProductResponseDto>()
+                    Name = p.Name
+                }).ToList() ?? new List<ProductDto>()
         };
     }
 

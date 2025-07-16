@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.Category;
 using YourEcommerceApi.DTOs.Product;
+using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.DTOs.SubCategory;
 using YourEcommerceApi.Models;
 
@@ -34,14 +35,11 @@ public class SubcategoryService : ISubcategoryService
                 Name = sc.Category?.Name ?? string.Empty
             },
             Products = sc.Products?
-                .Select(p => new ProductResponseDto
+                .Select(p => new ProductDto
                 {
                     Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).ToList() ?? new List<ProductResponseDto>()
+                    Name = p.Name
+                }).ToList() ?? new List<ProductDto>()
         });
     }
 
@@ -66,14 +64,11 @@ public class SubcategoryService : ISubcategoryService
                 Name = subcategory.Category?.Name ?? string.Empty
             },
             Products = subcategory.Products?
-                .Select(p => new ProductResponseDto
+                .Select(p => new ProductDto
                 {
                     Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).ToList() ?? new List<ProductResponseDto>()
+                    Name = p.Name
+                }).ToList() ?? new List<ProductDto>()
         };
     }
 
@@ -104,7 +99,7 @@ public class SubcategoryService : ISubcategoryService
                 Id = category.Id,
                 Name = category.Name
             },
-            Products = new List<ProductResponseDto>()
+            Products = new List<ProductDto>()
         };
     }
 

@@ -269,8 +269,8 @@ namespace YourEcommerceApi.Migrations
                     b.Property<string>("Model")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Size")
-                        .HasColumnType("int");
+                    b.Property<string>("Size")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SportId")
                         .HasColumnType("int");

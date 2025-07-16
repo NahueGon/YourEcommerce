@@ -17,100 +17,99 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<ProductResponseDto>> GetAll()
     {
-        var products = await _context.Products.ToListAsync();
+        var clothes = await _context.Products
+            .OfType<Cloth>()
+            .Include(p => p.Brand)
+            .Include(p => p.Subcategory)
+            .Include(p => p.Sport)
+            .ToListAsync();
 
-        return products.Select(p => new ProductResponseDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Description = p.Description,
-            Price = p.Price,
-            Stock = p.Stock
-        });
+        var shoes = await _context.Products
+            .OfType<Shoe>()
+            .Include(p => p.Brand)
+            .Include(p => p.Subcategory)
+            .Include(p => p.Sport)
+            .ToListAsync();
+
+        var accessories = await _context.Products
+            .OfType<Accessory>()
+            .Include(p => p.Brand)
+            .Include(p => p.Subcategory)
+            .ToListAsync();
+
+        var products = clothes.Cast<Product>()
+            .Concat(shoes)
+            .Concat(accessories)
+            .ToList();
+
+        var response = products.Select(p => p.ToDto()).ToList();
+
+        return response;
     }
 
     public async Task<ProductResponseDto?> Get(int id)
     {
-        var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+        var product = await _context.Products
+            .FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null)
             return null;
 
-        return new ProductResponseDto
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Description = product.Description,
-            Price = product.Price,
-            Stock = product.Stock
-        };
+        return product.ToDto();
     }
 
-    public async Task<ProductResponseDto> SaveAccessory(AccessoryCreateDto accesoryDto)
+    public async Task<IEnumerable<ProductResponseDto>> GetAllByType(string type)
     {
-        var brand = await _context.Brands.FindAsync(accesoryDto.BrandId);
+        List<Product> products;
 
-        if (brand == null)
-            throw new Exception("Marca no encontrada");
-
-        var accessory = new Accessory
+        switch (type.ToLower())
         {
-            Name = accesoryDto.Name,
-            Description = accesoryDto.Description,
-            Price = accesoryDto.Price,
-            Stock = accesoryDto.Stock,
-            BrandId = accesoryDto.BrandId,
-            SubcategoryId = accesoryDto.SubcategoryId,
-            Gender = accesoryDto.Gender,
-            Type = accesoryDto.Type
-        };
+            case "cloth":
+                products = await _context.Products
+                    .OfType<Cloth>()
+                    .Include(p => p.Brand)
+                    .Include(p => p.Subcategory)
+                    .Include(p => p.Sport)
+                    .Cast<Product>()
+                    .ToListAsync();
+                break;
 
-        _context.Products.Add(accessory);
-        await _context.SaveChangesAsync();
+            case "shoe":
+                products = await _context.Products
+                    .OfType<Shoe>()
+                    .Include(p => p.Brand)
+                    .Include(p => p.Subcategory)
+                    .Include(p => p.Sport)
+                    .Cast<Product>()
+                    .ToListAsync();
+                break;
 
-        return accessory.ToDto();
-    }
+            case "accessory":
+                products = await _context.Products
+                    .Where(p => !(p is Cloth) && !(p is Shoe))
+                    .Include(p => p.Brand)
+                    .Include(p => p.Subcategory)
+                    .ToListAsync();
+                break;
 
-    public async Task<ProductResponseDto> SaveShoe(ShoeCreateDto shoeDto)
-    {
-        var brand = await _context.Brands.FindAsync(shoeDto.BrandId);
+            default:
+                products = new List<Product>();
+                break;
+        }
 
-        if (brand == null)
-            throw new Exception("Marca no encontrada");
-
-        var sport = await _context.Sports.FindAsync(shoeDto.SportId);
-
-        if (sport == null)
-            throw new Exception("Deporte no encontrado");
-
-        var shoe = new Shoe
-        {
-            Name = shoeDto.Name,
-            Description = shoeDto.Description,
-            Price = shoeDto.Price,
-            Stock = shoeDto.Stock,
-            BrandId = shoeDto.BrandId,
-            SubcategoryId = shoeDto.SubcategoryId,
-            Gender = shoeDto.Gender,
-        };
-
-        _context.Products.Add(shoe);
-        await _context.SaveChangesAsync();
-
-        return shoe.ToDto();
+        return products.Select(p => p.ToDto()).ToList();
     }
 
     public async Task<ProductResponseDto> SaveCloth(ClothCreateDto clothDto)
     {
-        var brand = await _context.Brands.FindAsync(clothDto.BrandId);
+        var subcategory = await _context.SubCategories.FindAsync(clothDto.SubcategoryId)
+            ?? throw new Exception("Subcategoría no encontrada");
 
-        if (brand == null)
-            throw new Exception("Marca no encontrada");
+        var brand = await _context.Brands.FindAsync(clothDto.BrandId)
+            ?? throw new Exception("Marca no encontrada");
 
-        var sport = await _context.Sports.FindAsync(clothDto.SportId);
-
-        if (sport == null)
-            throw new Exception("Deporte no encontrado");
+        var sport = await _context.Sports.FindAsync(clothDto.SportId)
+            ?? throw new Exception("Deporte no encontrado");
 
         var cloth = new Cloth
         {
@@ -118,16 +117,91 @@ public class ProductService : IProductService
             Description = clothDto.Description,
             Price = clothDto.Price,
             Stock = clothDto.Stock,
+            Gender = clothDto.Gender,
+            Size = clothDto.Size,
             BrandId = clothDto.BrandId,
             SubcategoryId = clothDto.SubcategoryId,
-            Gender = clothDto.Gender,
-            SportId = clothDto.SportId
+            SportId = clothDto.SportId,
+            Brand = brand,
+            Subcategory = subcategory,
+            Sport = sport
         };
 
         _context.Products.Add(cloth);
         await _context.SaveChangesAsync();
-
         return cloth.ToDto();
     }
-    
+
+    public async Task<ProductResponseDto> SaveShoe(ShoeCreateDto shoeDto)
+    {
+        var subcategory = await _context.SubCategories.FindAsync(shoeDto.SubcategoryId)
+            ?? throw new Exception("Subcategoría no encontrada");
+
+        var brand = await _context.Brands.FindAsync(shoeDto.BrandId)
+            ?? throw new Exception("Marca no encontrada");
+
+        var sport = await _context.Sports.FindAsync(shoeDto.SportId)
+            ?? throw new Exception("Deporte no encontrado");
+
+        var shoe = new Shoe
+        {
+            Name = shoeDto.Name,
+            Description = shoeDto.Description,
+            Price = shoeDto.Price,
+            Stock = shoeDto.Stock,
+            Gender = shoeDto.Gender,
+            Model = shoeDto.Model,
+            Size = shoeDto.Size,
+            BrandId = shoeDto.BrandId,
+            SubcategoryId = shoeDto.SubcategoryId,
+            SportId = shoeDto.SportId,
+            Brand = brand,
+            Subcategory = subcategory,
+            Sport = sport
+        };
+
+        _context.Products.Add(shoe);
+        await _context.SaveChangesAsync();
+        return shoe.ToDto();
+    }
+
+    public async Task<ProductResponseDto> SaveAccessory(AccessoryCreateDto accessoryDto)
+    {
+        var subcategory = await _context.SubCategories.FindAsync(accessoryDto.SubcategoryId)
+            ?? throw new Exception("Subcategoría no encontrada");
+
+        var brand = await _context.Brands.FindAsync(accessoryDto.BrandId)
+            ?? throw new Exception("Marca no encontrada");
+
+        var accessory = new Accessory
+        {
+            Name = accessoryDto.Name,
+            Description = accessoryDto.Description,
+            Price = accessoryDto.Price,
+            Stock = accessoryDto.Stock,
+            Gender = accessoryDto.Gender,
+            BrandId = accessoryDto.BrandId,
+            SubcategoryId = accessoryDto.SubcategoryId,
+            Type = accessoryDto.Type,
+            Brand = brand,
+            Subcategory = subcategory
+        };
+
+        _context.Products.Add(accessory);
+        await _context.SaveChangesAsync();
+        return accessory.ToDto();
+    }
+
+    public async Task<bool> Delete(int id)
+    {
+        var currentProduct = await _context.Products.FindAsync(id);
+
+        if (currentProduct == null)
+            return false;
+
+        _context.Remove(currentProduct);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
 }

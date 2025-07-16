@@ -1,4 +1,7 @@
+using YourEcommerceApi.DTOs.BrandDtos;
 using YourEcommerceApi.DTOs.Product;
+using YourEcommerceApi.DTOs.SportDtos;
+using YourEcommerceApi.DTOs.SubCategory;
 
 namespace YourEcommerceApi.Models;
 
@@ -10,12 +13,30 @@ public class Cloth : Product
 
     public override ProductResponseDto ToDto()
     {
-        return new ProductResponseDto
+        return new ClothResponseDto
         {
+            Id = Id,
             Name = Name,
-            Description = this.Description,
+            Description = Description,
+            Price = Price,
+            Stock = Stock,
+            Gender = Gender,
             Size = Size,
-            Sport = Sport?.Name
+            Sport = new SportDto
+            {
+                Id = SportId,
+                Name = Sport?.Name ?? string.Empty
+            },
+            Brand = new BrandDto
+            {
+                Id = BrandId,
+                Name = Brand?.Name ?? string.Empty
+            },
+            Subcategory = new SubcategoryDto
+            {
+                Id = SubcategoryId,
+                Name = Subcategory?.Name ?? string.Empty
+            }
         };
     }
 }

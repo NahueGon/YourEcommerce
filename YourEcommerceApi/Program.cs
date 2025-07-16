@@ -1,5 +1,10 @@
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Filters;
 using YourEcommerceApi.Context;
+using YourEcommerceApi.DTOs.Product;
+using YourEcommerceApi.DTOs.Product.Examples;
 using YourEcommerceApi.Services;
 using YourEcommerceApi.Services.Interfaces;
 
@@ -23,7 +28,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 var app = builder.Build();
 

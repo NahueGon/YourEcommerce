@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.Product;
+using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.DTOs.Sport;
 using YourEcommerceApi.Models;
 using YourEcommerceApi.Services.Interfaces;
@@ -29,14 +30,11 @@ public class SportService : ISportService
             Name = s.Name,
             Description = s.Description,
             Products = s.Shoes?
-                .Select(p => new ProductResponseDto
+                .Select(p => new ProductDto
                 {
                     Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).ToList() ?? new List<ProductResponseDto>()
+                    Name = p.Name
+                }).ToList() ?? new List<ProductDto>()
         });
     }
     
@@ -56,14 +54,11 @@ public class SportService : ISportService
             Name = sport.Name,
             Description = sport.Description,
             Products = sport.Shoes?
-                .Select(p => new ProductResponseDto
+                .Select(p => new ProductDto
                 {
                     Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock
-                }).ToList() ?? new List<ProductResponseDto>()
+                    Name = p.Name
+                }).ToList() ?? new List<ProductDto>()
         };
     }
 
