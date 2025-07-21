@@ -207,7 +207,6 @@ namespace YourEcommerceApi.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Lastname")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")

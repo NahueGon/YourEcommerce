@@ -333,3 +333,6 @@ C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Scrutor.dll
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Annotations.dll
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Filters.dll
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidation.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidation.AspNetCore.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidation.DependencyInjectionExtensions.dll

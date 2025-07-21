@@ -2,6 +2,6 @@ namespace YourEcommerceApi.Models;
 
 public enum UserRole
 {
-    Customer,
-    Admin
+    Customer, // 0
+    Admin     // 1
 }

@@ -28,8 +28,7 @@ namespace YourEcommerceApi.Controllers
         {
             var subcategory = await _subcategoryService.Get(id);
 
-            if (subcategory == null)
-                return NotFound("Subcategoría no encontrada");
+            if (subcategory == null) return NotFound("Subcategoría no encontrada");
 
             return Ok(subcategory);
         }
@@ -37,8 +36,7 @@ namespace YourEcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<SubcategoryResponseDto>> CreateSubcategory(SubcategoryCreateDto subcategoryDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var responseDto = await _subcategoryService.Save(subcategoryDto);
 
@@ -48,8 +46,7 @@ namespace YourEcommerceApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateSubcategory(int id, SubcategoryUpdateDto subcategoryDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var updated = await _subcategoryService.Get(id);
 
@@ -65,8 +62,7 @@ namespace YourEcommerceApi.Controllers
         {
             var deleted = await _subcategoryService.Get(id);
 
-            if (deleted == null)
-                return NotFound("Subcategoría no encontrada");
+            if (deleted == null) return NotFound("Subcategoría no encontrada");
 
             await _subcategoryService.Delete(id);
             return NoContent();

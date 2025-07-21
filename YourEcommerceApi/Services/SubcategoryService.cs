@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.Category;
-using YourEcommerceApi.DTOs.Product;
 using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.DTOs.SubCategory;
 using YourEcommerceApi.Models;
@@ -20,25 +19,25 @@ public class SubcategoryService : ISubcategoryService
     public async Task<IEnumerable<SubcategoryResponseDto>> GetAll()
     {
         var subcategories = await _context.SubCategories
-            .Include(sc => sc.Category)
-            .Include(sc => sc.Products)
+            .Include(subcategory => subcategory.Category)
+            .Include(subcategory => subcategory.Products)
             .ToListAsync();
 
-        return subcategories.Select(sc => new SubcategoryResponseDto
+        return subcategories.Select(subcategory => new SubcategoryResponseDto
         {
-            Id = sc.Id,
-            Name = sc.Name,
-            Description = sc.Description,
+            Id = subcategory.Id,
+            Name = subcategory.Name,
+            Description = subcategory.Description,
             Category = new CategoryDto
             {
-                Id = sc.CategoryId,
-                Name = sc.Category?.Name ?? string.Empty
+                Id = subcategory.CategoryId,
+                Name = subcategory.Category?.Name ?? string.Empty
             },
-            Products = sc.Products?
-                .Select(p => new ProductDto
+            Products = subcategory.Products?
+                .Select(product => new ProductDto
                 {
-                    Id = p.Id,
-                    Name = p.Name
+                    Id = product.Id,
+                    Name = product.Name
                 }).ToList() ?? new List<ProductDto>()
         });
     }
@@ -46,12 +45,11 @@ public class SubcategoryService : ISubcategoryService
     public async Task<SubcategoryResponseDto?> Get(int id)
     {
         var subcategory = await _context.SubCategories
-            .Include(sc => sc.Category)
-            .Include(sc => sc.Products)
-            .FirstOrDefaultAsync(sc => sc.Id == id);
+            .Include(subcategory => subcategory.Category)
+            .Include(subcategory => subcategory.Products)
+            .FirstOrDefaultAsync(subcategory => subcategory.Id == id);
 
-        if (subcategory == null)
-            return null;
+        if (subcategory == null) return null;
 
         return new SubcategoryResponseDto
         {
@@ -64,10 +62,10 @@ public class SubcategoryService : ISubcategoryService
                 Name = subcategory.Category?.Name ?? string.Empty
             },
             Products = subcategory.Products?
-                .Select(p => new ProductDto
+                .Select(product => new ProductDto
                 {
-                    Id = p.Id,
-                    Name = p.Name
+                    Id = product.Id,
+                    Name = product.Name
                 }).ToList() ?? new List<ProductDto>()
         };
     }
@@ -76,8 +74,7 @@ public class SubcategoryService : ISubcategoryService
     {
         var category = await _context.Categories.FindAsync(subcategoryDto.CategoryId);
 
-        if (category == null)
-            throw new Exception("Categoria no encontrada");
+        if (category == null) throw new Exception("Categoria no encontrada");
 
         var subcategory = new SubCategory
         {
@@ -112,8 +109,7 @@ public class SubcategoryService : ISubcategoryService
 
         var newCategory = await _context.Categories.FindAsync(subcategoryDto.CategoryId);
 
-        if (newCategory == null)
-            return false;
+        if (newCategory == null) return false;
 
         currentSubcategory.Name = subcategoryDto.Name;
         currentSubcategory.Description = subcategoryDto.Description;
@@ -128,13 +124,11 @@ public class SubcategoryService : ISubcategoryService
     {
         var currentSubcategory = await _context.SubCategories.FindAsync(id);
 
-        if (currentSubcategory == null)
-            return false;
+        if (currentSubcategory == null) return false;
 
         _context.Remove(currentSubcategory);
         await _context.SaveChangesAsync();
 
         return true;
     }
-
 }

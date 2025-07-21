@@ -1,0 +1,54 @@
+﻿@model YourEcommerce.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+
+<div class="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="w-full max-w-md p-8 bg-white rounded-lg shadow dark:bg-gray-800">
+        <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white">Iniciar sesión</h2>
+        <form asp-action="Login" method="post" class="mt-6 space-y-4">
+            <div>
+                <label asp-for="Email" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"></label>
+                <input asp-for="Email" type="email" 
+                    class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600" 
+                required />
+                <span asp-validation-for="Email" class="text-red-600 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="Password" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"></label>
+                <input asp-for="Password" type="password" 
+                    class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600" 
+                required />
+                <span asp-validation-for="Password" class="text-red-600 text-sm"></span>
+            </div>
+            <button type="submit" class="cursor-pointer w-full px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">Ingresar</button>
+        </form>
+        <p class="mt-4 text-sm text-center text-gray-600 dark:text-gray-400">
+            ¿Aún no tienes una cuenta?
+            <a asp-controller="Auth" asp-action="Register" class="text-blue-600 hover:underline">Resgítrate</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (ViewBag.ShowSuccess != null && (bool)ViewBag.ShowSuccess)
+    {
+        <script>
+            showToast("success", "Inicio de sesión exitoso");
+
+            setTimeout(() => {
+                window.location.href = "/Home/Index";
+            }, 1000);
+        </script>
+    }
+
+    @if (ViewBag.ErrorToast != null)
+    {
+        <script>
+            showToast("error", "@ViewBag.ErrorToast");
+        </script>
+    }
+}
