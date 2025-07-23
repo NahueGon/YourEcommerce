@@ -1,4 +1,4 @@
-using YourEcommerceApi.DTOs.SubCategory;
+using YourEcommerceApi.DTOs.ProductType;
 
 namespace YourEcommerceApi.DTOs.Category;
 
@@ -8,5 +8,5 @@ public class CategoryResponseDto
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
 
-    public List<SubcategoryDto> Subcategories { get; set; } = new();
+    public List<ProductTypeResponseDto> ProductTypes { get; set; } = new();
 }

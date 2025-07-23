@@ -131,6 +131,28 @@ namespace YourEcommerceApi.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("YourEcommerceApi.Models.ProductType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("ProductTypes");
+                });
+
             modelBuilder.Entity("YourEcommerceApi.Models.Sport", b =>
                 {
                     b.Property<int>("Id")
@@ -161,9 +183,6 @@ namespace YourEcommerceApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -174,12 +193,15 @@ namespace YourEcommerceApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ProductTypeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
+                    b.HasIndex("ProductTypeId");
 
                     b.ToTable("SubCategories");
                 });
@@ -307,15 +329,26 @@ namespace YourEcommerceApi.Migrations
                     b.Navigation("Subcategory");
                 });
 
-            modelBuilder.Entity("YourEcommerceApi.Models.SubCategory", b =>
+            modelBuilder.Entity("YourEcommerceApi.Models.ProductType", b =>
                 {
                     b.HasOne("YourEcommerceApi.Models.Category", "Category")
-                        .WithMany("Subcategories")
+                        .WithMany("ProductTypes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("YourEcommerceApi.Models.SubCategory", b =>
+                {
+                    b.HasOne("YourEcommerceApi.Models.ProductType", "ProductType")
+                        .WithMany("Subcategories")
+                        .HasForeignKey("ProductTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductType");
                 });
 
             modelBuilder.Entity("YourEcommerceApi.Models.Cloth", b =>
@@ -346,6 +379,11 @@ namespace YourEcommerceApi.Migrations
                 });
 
             modelBuilder.Entity("YourEcommerceApi.Models.Category", b =>
+                {
+                    b.Navigation("ProductTypes");
+                });
+
+            modelBuilder.Entity("YourEcommerceApi.Models.ProductType", b =>
                 {
                     b.Navigation("Subcategories");
                 });

@@ -2,7 +2,6 @@ namespace YourEcommerce.ViewModels;
 
 public class NavbarViewModel
 {
-    public string? Name { get; set; }
-    public string? Email { get; set; }
-    public int? Role { get; set; }
+    public UserViewModel? User { get; set; }
+    public List<CategoryViewModel> Categories { get; set; } = new();
 }

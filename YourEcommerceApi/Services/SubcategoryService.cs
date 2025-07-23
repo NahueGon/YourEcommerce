@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
-using YourEcommerceApi.DTOs.Category;
-using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.DTOs.SubCategory;
+using YourEcommerceApi.Extensions;
 using YourEcommerceApi.Models;
 
 namespace YourEcommerceApi.Services.Interfaces;
@@ -19,111 +18,76 @@ public class SubcategoryService : ISubcategoryService
     public async Task<IEnumerable<SubcategoryResponseDto>> GetAll()
     {
         var subcategories = await _context.SubCategories
-            .Include(subcategory => subcategory.Category)
-            .Include(subcategory => subcategory.Products)
+            .Include(sc => sc.ProductType)
+            .Include(sc => sc.Products)
             .ToListAsync();
 
-        return subcategories.Select(subcategory => new SubcategoryResponseDto
-        {
-            Id = subcategory.Id,
-            Name = subcategory.Name,
-            Description = subcategory.Description,
-            Category = new CategoryDto
-            {
-                Id = subcategory.CategoryId,
-                Name = subcategory.Category?.Name ?? string.Empty
-            },
-            Products = subcategory.Products?
-                .Select(product => new ProductDto
-                {
-                    Id = product.Id,
-                    Name = product.Name
-                }).ToList() ?? new List<ProductDto>()
-        });
+        return subcategories.Select(sc => sc.ToDto());
     }
 
     public async Task<SubcategoryResponseDto?> Get(int id)
     {
         var subcategory = await _context.SubCategories
-            .Include(subcategory => subcategory.Category)
-            .Include(subcategory => subcategory.Products)
-            .FirstOrDefaultAsync(subcategory => subcategory.Id == id);
-
+            .Include(sc => sc.ProductType)
+            .Include(sc => sc.Products)
+            .FirstOrDefaultAsync(sc => sc.Id == id);
         if (subcategory == null) return null;
 
-        return new SubcategoryResponseDto
-        {
-            Id = subcategory.Id,
-            Name = subcategory.Name,
-            Description = subcategory.Description,
-            Category = new CategoryDto
-            {
-                Id = subcategory.CategoryId,
-                Name = subcategory.Category?.Name ?? string.Empty
-            },
-            Products = subcategory.Products?
-                .Select(product => new ProductDto
-                {
-                    Id = product.Id,
-                    Name = product.Name
-                }).ToList() ?? new List<ProductDto>()
-        };
+        return subcategory.ToDto();
     }
 
     public async Task<SubcategoryResponseDto> Save(SubcategoryCreateDto subcategoryDto)
     {
-        var category = await _context.Categories.FindAsync(subcategoryDto.CategoryId);
-
-        if (category == null) throw new Exception("Categoria no encontrada");
+        var productType = await _context.ProductTypes.FindAsync(subcategoryDto.ProductTypeId);
+        if (productType == null) throw new Exception("Tipo no encontrado");
 
         var subcategory = new SubCategory
         {
             Name = subcategoryDto.Name,
             Description = subcategoryDto.Description,
-            Category = category
+            ProductTypeId = productType.Id,
+            ProductType = productType
         };
 
         _context.SubCategories.Add(subcategory);
         await _context.SaveChangesAsync();
 
-        return new SubcategoryResponseDto
-        {
-            Id = subcategory.Id,
-            Name = subcategory.Name,
-            Description = subcategory.Description,
-            Category = new CategoryDto
-            {
-                Id = category.Id,
-                Name = category.Name
-            },
-            Products = new List<ProductDto>()
-        };
+        return subcategory.ToDto();
     }
 
-    public async Task<bool> Update(int id, SubcategoryUpdateDto subcategoryDto)
+    public async Task<SubcategoryResponseDto?> Update(int id, SubcategoryUpdateDto? subcategoryDto)
     {
-        var currentSubcategory = await _context.SubCategories.FindAsync(id);
+        if (subcategoryDto == null) return null;
 
-        if (currentSubcategory == null)
-            return false;
+        var currentSubcategory = await _context.SubCategories
+            .Include(sc => sc.Products)
+            .FirstOrDefaultAsync(sc => sc.Id == id);
+        if (currentSubcategory == null) return null;
 
-        var newCategory = await _context.Categories.FindAsync(subcategoryDto.CategoryId);
+        var newProductType = await _context.ProductTypes.FindAsync(subcategoryDto?.ProductTypeId);
+        if (newProductType == null) return null;
 
-        if (newCategory == null) return false;
+        if (!string.IsNullOrWhiteSpace(subcategoryDto?.Name) && subcategoryDto.Name != currentSubcategory.Name)
+            currentSubcategory.Name = subcategoryDto.Name;
+        if (!string.IsNullOrWhiteSpace(subcategoryDto?.Description) && subcategoryDto.Description != currentSubcategory.Description)
+            currentSubcategory.Description = subcategoryDto.Description;
+        if (subcategoryDto?.ProductTypeId != currentSubcategory.ProductTypeId)
+        {
+            var productType = await _context.ProductTypes.FindAsync(subcategoryDto?.ProductTypeId);
+            if (productType == null) return null;
 
-        currentSubcategory.Name = subcategoryDto.Name;
-        currentSubcategory.Description = subcategoryDto.Description;
-        currentSubcategory.Category = newCategory;
+            currentSubcategory.ProductTypeId = newProductType.Id;
+            currentSubcategory.ProductType = newProductType;
+        }
         
         await _context.SaveChangesAsync();
 
-        return true;
+        return currentSubcategory.ToDto();
     }
 
     public async Task<bool> Delete(int id)
     {
         var currentSubcategory = await _context.SubCategories.FindAsync(id);
-
         if (currentSubcategory == null) return false;
 
         _context.Remove(currentSubcategory);

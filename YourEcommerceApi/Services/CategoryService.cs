@@ -2,9 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs;
 using YourEcommerceApi.DTOs.Category;
-using YourEcommerceApi.DTOs.Product;
-using YourEcommerceApi.DTOs.ProductDtos;
-using YourEcommerceApi.DTOs.SubCategory;
+using YourEcommerceApi.Extensions;
 using YourEcommerceApi.Models;
 using YourEcommerceApi.Services.Interfaces;
 
@@ -22,44 +20,21 @@ public class CategoryService : ICategoryService
     public async Task<IEnumerable<CategoryResponseDto>> GetAll()
     {
         var categories = await _context.Categories
-            .Include(c => c.Subcategories)
+            .Include(c => c.ProductTypes)
+                .ThenInclude(pt => pt.Subcategories)
             .ToListAsync();
 
-        return categories.Select(c => new CategoryResponseDto
-        {
-            Id = c.Id,
-            Name = c.Name,
-            Description = c.Description,
-            Subcategories = c.Subcategories?
-                .Select(sc => new SubcategoryDto
-                {
-                    Id = sc.Id,
-                    Name = sc.Name
-                }).ToList() ?? new List<SubcategoryDto>()
-        });
+        return categories.Select(c => c.ToDto());
     }
 
     public async Task<CategoryResponseDto?> Get(int id)
     {
         var category = await _context.Categories
-            .Include(c => c.Subcategories)
+            .Include(c => c.ProductTypes)
             .FirstOrDefaultAsync(c => c.Id == id);
+        if (category == null) return null;
 
-        if (category == null)
-            return null;
-
-        return new CategoryResponseDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description,
-            Subcategories = category.Subcategories?
-                .Select(sc => new SubcategoryDto
-                {
-                    Id = sc.Id,
-                    Name = sc.Name
-                }).ToList() ?? new List<SubcategoryDto>()
-        };
+        return category.ToDto();
     }
 
     public async Task<CategoryResponseDto> Save(CategoryCreateDto categoryDto)
@@ -73,40 +48,36 @@ public class CategoryService : ICategoryService
         _context.Categories.Add(category);
         await _context.SaveChangesAsync();
 
-        return new CategoryResponseDto
-        {
-            Id = category.Id,
-            Name = category.Name,
-            Description = category.Description,
-            Subcategories = new List<SubcategoryDto>()
-        };
+        return category.ToDto();
     }
 
-    public async Task<bool> Update(int id, CategoryUpdateDto categoryDto)
+    public async Task<CategoryResponseDto?> Update(int id, CategoryUpdateDto? categoryDto)
     {
-        var currentCategory = await _context.Categories.FindAsync(id);
+        if (categoryDto == null) return null;
 
-        if (currentCategory == null)
-            return false;
+        var currentCategory = await _context.Categories
+            .Include(c => c.ProductTypes)
+            .FirstOrDefaultAsync(c => c.Id == id);
+        if (currentCategory == null) return null;
 
-        currentCategory.Name = categoryDto.Name;
-        currentCategory.Description = categoryDto.Description;
+        if (!string.IsNullOrWhiteSpace(categoryDto.Name) && categoryDto.Name != currentCategory.Name)
+            currentCategory.Name = categoryDto.Name;
+        if (!string.IsNullOrWhiteSpace(categoryDto.Description) && categoryDto.Description != currentCategory.Description)
+            currentCategory.Description = categoryDto.Description;
+
         await _context.SaveChangesAsync();
 
-        return true;
+        return currentCategory.ToDto();
     }
 
     public async Task<bool> Delete(int id)
     {
         var currentCategory = await _context.Categories.FindAsync(id);
-
-        if (currentCategory == null)
-            return false;
+        if (currentCategory == null) return false;
 
         _context.Remove(currentCategory);
         await _context.SaveChangesAsync();
 
         return true;
     }
-
 }

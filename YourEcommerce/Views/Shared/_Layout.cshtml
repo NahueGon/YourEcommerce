@@ -1,46 +1,46 @@
 ﻿<!DOCTYPE html>
 <html lang="en" class="dark">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>@ViewData["Title"]</title>
+        <script type="importmap"></script>
+        <link href="~/css/output.css" rel="stylesheet" />
+        <link href="~/css/site.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        <script>
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark')
+            }
+        </script>
+    </head>
+    <body class="bg-white dark:bg-black text-black dark:text-white">
+        <header>
+            @await Component.InvokeAsync("Navbar")
+            @await Component.InvokeAsync("MegaMenu")
+            @await Component.InvokeAsync("MenuDrawer")
+            @* @await Component.InvokeAsync("CartDrawer") *@
+        </header>
 
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <script type="importmap"></script>
-    <link href="~/css/output.css" rel="stylesheet" />
-    <link href="~/css/site.css" rel="stylesheet" />
-    <script>
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark')
-        }
-    </script>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
 
-</head>
+        <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">
+            @await Html.PartialAsync("_Footer")
+        </footer>
 
-<body class="bg-white dark:bg-black text-black dark:text-white">
-    <header>
-        @await Component.InvokeAsync("Navbar")
-    </header>
-
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-
-    <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">
-        @await Html.PartialAsync("_Footer")
-    </footer>
-
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        lucide.createIcons();
-    </script>
-    <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
-    <script src="~/js/flowbite.min.js"></script>
-    <script src="~/js/theme-toggle.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script>
+            lucide.createIcons();
+        </script>
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
+        <script src="~/js/flowbite.min.js"></script>
+        <script src="~/js/theme-toggle.js"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </body>
 </html>

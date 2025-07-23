@@ -1,5 +1,3 @@
-using YourEcommerceApi.DTOs.ProductDtos;
-
 namespace YourEcommerceApi.DTOs.SubCategory;
 
 public class SubcategoryDto

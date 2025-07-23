@@ -1,0 +1,93 @@
+@model YourEcommerce.ViewModels.MenuDrawerViewModel
+
+<div id="drawer-backdrop" class="fixed top-0 left-0 z-40 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white w-64 dark:bg-gray-800" tabindex="-1" aria-labelledby="drawer-backdrop-label">
+    <h5 id="drawer-backdrop-label" class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Menu</h5>
+    <button type="button" data-drawer-hide="drawer-backdrop" aria-controls="drawer-backdrop" class="cursor-pointer text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 end-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white" >
+      <span class="sr-only">Close menu</span>
+      <i data-lucide="x" class="size-7"></i>
+   </button>
+  <div class="py-4 overflow-y-auto">
+      <ul class="space-y-4">
+            @foreach (var category in Model.Categories)
+            {
+                <div>
+                    <button id="btn-category-@category.Id" type="button" class="cursor-pointer w-full flex gap-2 items-center text-left text-gray-500 font-semibold py-2 px-3 text-lg" onclick="toggleCategory(@category.Id)">
+                        @category.Name
+                        <i id="icon-category-@category.Id" data-lucide="chevron-down" class="size-5 transition-transform"></i>
+                    </button>
+                    <div id="category-@category.Id" class="hidden pl-4 space-y-2 mb-6">
+                        @foreach (var productType in category.ProductTypes)
+                        {
+                            <div>
+                                <button id="btn-type-@productType.Id" type="button" class="cursor-pointer w-full flex gap-2 items-center text-left dark:text-gray-500 font-medium py-1 px-2 text-base" onclick="toggleProductType(@productType.Id)">
+                                    @productType.Name
+                                    <i id="icon-type-@productType.Id" data-lucide="chevron-down" class="size-5 transition-transform"></i>
+                                </button>
+                                <ul id="product-type-@productType.Id" class="hidden pl-5 font-medium mb-6">
+                                    @foreach (var subcategory in productType.Subcategories)
+                                    {
+                                        <li>
+                                            <a href="#" class="block py-2 text-gray-500 hover:text-black dark:hover:text-white">@subcategory.Name</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+      </ul>
+   </div>
+</div>
+
+<script>
+    function toggleCategory(id) {
+        const content = document.getElementById(`category-${id}`);
+        const icon = document.getElementById(`icon-category-${id}`);
+        const button = document.getElementById(`btn-category-${id}`);
+        const isHidden = content.classList.contains('hidden');
+
+        document.querySelectorAll('[id^="category-"]').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('[id^="icon-category-"]').forEach(i => i.setAttribute('data-lucide', 'chevron-down'));
+        document.querySelectorAll('[id^="btn-category-"]').forEach(b => {
+            b.classList.remove('dark:text-white');
+            b.classList.remove('text-black');
+            b.classList.add('text-gray-500');
+        });
+
+        if (isHidden) {
+            content.classList.remove('hidden');
+            icon.setAttribute('data-lucide', 'chevron-up');
+            button.classList.remove('text-gray-500');
+            button.classList.add('dark:text-white');
+            button.classList.add('text-black');
+        }
+
+        lucide.createIcons();
+    }
+
+    function toggleProductType(id) {
+        const content = document.getElementById(`product-type-${id}`);
+        const icon = document.getElementById(`icon-type-${id}`);
+        const button = document.getElementById(`btn-type-${id}`);
+        const isHidden = content.classList.contains('hidden');
+
+        document.querySelectorAll('[id^="product-type-"]').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('[id^="icon-type-"]').forEach(i => i.setAttribute('data-lucide', 'chevron-down'));
+        document.querySelectorAll('[id^="btn-type-"]').forEach(b => {
+            b.classList.remove('dark:text-white');
+            b.classList.remove('text-black');
+            b.classList.add('text-gray-500');
+        });
+
+        if (isHidden) {
+            content.classList.remove('hidden');
+            icon.setAttribute('data-lucide', 'chevron-up');
+            button.classList.remove('text-gray-500');
+            button.classList.add('dark:text-white');
+            button.classList.add('text-black');
+        }
+
+        lucide.createIcons();
+    }
+</script>

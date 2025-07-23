@@ -46,7 +46,7 @@ namespace YourEcommerceApi.Controllers
             return CreatedAtAction(nameof(GetCategory), new { id = responseDto.Id }, responseDto);
         }
 
-        [HttpPut("{id}")]
+        [HttpPatch("{id}")]
         public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(int id, CategoryUpdateDto categoryDto)
         {
             if (!ModelState.IsValid)

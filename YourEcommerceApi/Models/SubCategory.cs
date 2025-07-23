@@ -8,8 +8,8 @@ public class SubCategory
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-    public int CategoryId { get; set; }
-    public Category? Category { get; set; }
+    public int ProductTypeId { get; set; }
+    public ProductType? ProductType { get; set; }
 
     public ICollection<Product>? Products { get; set; }
 }

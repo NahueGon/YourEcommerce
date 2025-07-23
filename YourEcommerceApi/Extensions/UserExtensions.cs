@@ -14,7 +14,8 @@ public static class UserExtensions
             Lastname = user.Lastname,
             Email = user.Email,
             PhoneNumber = user.PhoneNumber,
-            Address = user.Address
+            Address = user.Address,
+            Role = user.Role
         };
     }
 }

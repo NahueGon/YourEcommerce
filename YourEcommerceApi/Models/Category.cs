@@ -8,5 +8,5 @@ public class Category
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-    public ICollection<SubCategory>? Subcategories { get; set; }
+    public ICollection<ProductType> ProductTypes { get; set; } = new List<ProductType>();
 }

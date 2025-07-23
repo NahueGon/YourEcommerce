@@ -56,7 +56,8 @@ public class AuthController : Controller
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, $"{user.Name} {user.Lastname}"),
-            new Claim(ClaimTypes.Email, user.Email ?? "")
+            new Claim(ClaimTypes.Email, user.Email ?? ""),
+            new Claim(ClaimTypes.Role, user.Role ?? "Customer")
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
