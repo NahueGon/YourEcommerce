@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Products;
 
 namespace YourEcommerceApi.Context.Configurations;
 

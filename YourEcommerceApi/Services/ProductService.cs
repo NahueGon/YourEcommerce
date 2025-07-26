@@ -1,14 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.Product;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.DTOs.ProductDtos;
+using YourEcommerceApi.Extensions;
+using YourEcommerceApi.Models.Products;
 using YourEcommerceApi.Services.Interfaces;
 
 namespace YourEcommerceApi.Services;
 
 public class ProductService : IProductService
 {
-    AppDbContext _context;
+    private readonly AppDbContext _context;
 
     public ProductService(AppDbContext dbContext)
     {
@@ -17,187 +19,149 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<ProductResponseDto>> GetAll()
     {
-        var clothes = await _context.Products
-            .OfType<Cloth>()
+        var products = await _context.Products
+            .Include(p => p.Category)
             .Include(p => p.Brand)
-            .Include(p => p.Subcategory)
             .Include(p => p.Sport)
+            .Include(p => p.ProductTags)
+                .ThenInclude(pt => pt.Tag)
+            .Include(p => p.ProductAttributes)
+            .Include(p => p.ProductVariants)
             .ToListAsync();
 
-        var shoes = await _context.Products
-            .OfType<Shoe>()
-            .Include(p => p.Brand)
-            .Include(p => p.Subcategory)
-            .Include(p => p.Sport)
-            .ToListAsync();
-
-        var accessories = await _context.Products
-            .OfType<Accessory>()
-            .Include(p => p.Brand)
-            .Include(p => p.Subcategory)
-            .ToListAsync();
-
-        var products = clothes.Cast<Product>()
-            .Concat(shoes)
-            .Concat(accessories)
-            .ToList();
-
-        var response = products.Select(p => p.ToDto()).ToList();
-
-        return response;
+        return products.Select(p => p.ToDto()).ToList();
     }
 
     public async Task<ProductResponseDto?> Get(int id)
     {
         var product = await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Brand)
+            .Include(p => p.Sport)
+            .Include(p => p.ProductTags)
+                .ThenInclude(pt => pt.Tag)
+            .Include(p => p.ProductAttributes)
+            .Include(p => p.ProductVariants)
             .FirstOrDefaultAsync(p => p.Id == id);
 
-        if (product == null)
-            return null;
+        if (product == null) return null;
 
         return product.ToDto();
     }
 
-    public async Task<IEnumerable<ProductResponseDto>> GetAllByType(string type)
+    public async Task<ProductResponseDto> Save(ProductCreateDto productDto)
     {
-        List<Product> products;
+        Brand? brand = null;
+        Sport? sport = null;
+        Category? category = null;
 
-        switch (type.ToLower())
+        if (productDto.CategoryId is > 0)
         {
-            case "cloth":
-                products = await _context.Products
-                    .OfType<Cloth>()
-                    .Include(p => p.Brand)
-                    .Include(p => p.Subcategory)
-                    .Include(p => p.Sport)
-                    .Cast<Product>()
-                    .ToListAsync();
-                break;
-
-            case "shoe":
-                products = await _context.Products
-                    .OfType<Shoe>()
-                    .Include(p => p.Brand)
-                    .Include(p => p.Subcategory)
-                    .Include(p => p.Sport)
-                    .Cast<Product>()
-                    .ToListAsync();
-                break;
-
-            case "accessory":
-                products = await _context.Products
-                    .Where(p => !(p is Cloth) && !(p is Shoe))
-                    .Include(p => p.Brand)
-                    .Include(p => p.Subcategory)
-                    .ToListAsync();
-                break;
-
-            default:
-                products = new List<Product>();
-                break;
+            category = await _context.Categories.FindAsync(productDto.CategoryId)
+                ?? throw new Exception("Categoria no encontrada.");
         }
 
-        return products.Select(p => p.ToDto()).ToList();
-    }
-
-    public async Task<ProductResponseDto> SaveCloth(ClothCreateDto clothDto)
-    {
-        var subcategory = await _context.SubCategories.FindAsync(clothDto.SubcategoryId)
-            ?? throw new Exception("Subcategoría no encontrada");
-
-        var brand = await _context.Brands.FindAsync(clothDto.BrandId)
-            ?? throw new Exception("Marca no encontrada");
-
-        var sport = await _context.Sports.FindAsync(clothDto.SportId)
-            ?? throw new Exception("Deporte no encontrado");
-
-        var cloth = new Cloth
+        if (productDto.BrandId is > 0)
         {
-            Name = clothDto.Name,
-            Description = clothDto.Description,
-            Price = clothDto.Price,
-            Stock = clothDto.Stock,
-            Gender = clothDto.Gender,
-            Size = clothDto.Size,
-            BrandId = clothDto.BrandId,
-            SubcategoryId = clothDto.SubcategoryId,
-            SportId = clothDto.SportId,
+            brand = await _context.Brands.FindAsync(productDto.BrandId)
+                ?? throw new Exception("Marca no encontrada.");
+        }
+
+        if (productDto.SportId is > 0)
+        {
+            sport = await _context.Sports.FindAsync(productDto.SportId)
+                ?? throw new Exception("Deporte no encontrado.");
+        }
+
+        var product = new Product
+        {
+            Name = productDto.Name,
+            Description = productDto.Description,
+            Price = productDto.Price,
+            Stock = productDto.Stock,
+            Gender = productDto.Gender,
+            CategoryId = category?.Id,
+            BrandId = brand?.Id,
+            SportId = sport?.Id,
+            Category = category,
             Brand = brand,
-            Subcategory = subcategory,
             Sport = sport
         };
 
-        _context.Products.Add(cloth);
+        _context.Products.Add(product);
         await _context.SaveChangesAsync();
-        return cloth.ToDto();
+
+        return product.ToDto();
     }
 
-    public async Task<ProductResponseDto> SaveShoe(ShoeCreateDto shoeDto)
+    public async Task<ProductResponseDto?> Update(int id, ProductUpdateDto productDto)
     {
-        var subcategory = await _context.SubCategories.FindAsync(shoeDto.SubcategoryId)
-            ?? throw new Exception("Subcategoría no encontrada");
+        if (productDto == null) return null;
 
-        var brand = await _context.Brands.FindAsync(shoeDto.BrandId)
-            ?? throw new Exception("Marca no encontrada");
+        var currentProduct = await _context.Products.FindAsync(id);
+        if (currentProduct == null) return null;
 
-        var sport = await _context.Sports.FindAsync(shoeDto.SportId)
-            ?? throw new Exception("Deporte no encontrado");
-
-        var shoe = new Shoe
+        if (productDto.CategoryId.HasValue)
         {
-            Name = shoeDto.Name,
-            Description = shoeDto.Description,
-            Price = shoeDto.Price,
-            Stock = shoeDto.Stock,
-            Gender = shoeDto.Gender,
-            Model = shoeDto.Model,
-            Size = shoeDto.Size,
-            BrandId = shoeDto.BrandId,
-            SubcategoryId = shoeDto.SubcategoryId,
-            SportId = shoeDto.SportId,
-            Brand = brand,
-            Subcategory = subcategory,
-            Sport = sport
-        };
+            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == productDto.CategoryId);
+            if (!categoryExists) throw new Exception("Categoria no encontrada.");
+        }
 
-        _context.Products.Add(shoe);
-        await _context.SaveChangesAsync();
-        return shoe.ToDto();
-    }
-
-    public async Task<ProductResponseDto> SaveAccessory(AccessoryCreateDto accessoryDto)
-    {
-        var subcategory = await _context.SubCategories.FindAsync(accessoryDto.SubcategoryId)
-            ?? throw new Exception("Subcategoría no encontrada");
-
-        var brand = await _context.Brands.FindAsync(accessoryDto.BrandId)
-            ?? throw new Exception("Marca no encontrada");
-
-        var accessory = new Accessory
+        if (productDto.BrandId.HasValue)
         {
-            Name = accessoryDto.Name,
-            Description = accessoryDto.Description,
-            Price = accessoryDto.Price,
-            Stock = accessoryDto.Stock,
-            Gender = accessoryDto.Gender,
-            BrandId = accessoryDto.BrandId,
-            SubcategoryId = accessoryDto.SubcategoryId,
-            Type = accessoryDto.Type,
-            Brand = brand,
-            Subcategory = subcategory
-        };
+            var brandExists = await _context.Brands.AnyAsync(b => b.Id == productDto.BrandId);
+            if (!brandExists) throw new Exception("Marca no encontrada.");
+        }
 
-        _context.Products.Add(accessory);
-        await _context.SaveChangesAsync();
-        return accessory.ToDto();
+        if (productDto.SportId.HasValue)
+        {
+            var sportExists = await _context.Sports.AnyAsync(s => s.Id == productDto.SportId);
+            if (!sportExists) throw new Exception("Deporte no encontrado.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(productDto.Name) && productDto.Name != currentProduct.Name)
+            currentProduct.Name = productDto.Name;
+
+        if (!string.IsNullOrWhiteSpace(productDto.Description) && productDto.Description != currentProduct.Description)
+            currentProduct.Description = productDto.Description;
+
+        if (productDto.Price != 0 && productDto.Price != currentProduct.Price)
+            currentProduct.Price = productDto.Price;
+
+        if (productDto.Gender != currentProduct.Gender)
+            currentProduct.Gender = productDto.Gender;
+
+        if (productDto.CategoryId.HasValue && productDto.CategoryId != currentProduct.CategoryId)
+            currentProduct.CategoryId = productDto.CategoryId;
+
+        if (productDto.BrandId.HasValue && productDto.BrandId != currentProduct.BrandId)
+            currentProduct.BrandId = productDto.BrandId;
+
+        if (productDto.SportId.HasValue && productDto.SportId != currentProduct.SportId)
+            currentProduct.SportId = productDto.SportId;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new Exception("No se pudo actualizar el producto. Verifica que la marca, categoría y deporte existan.", ex);
+        }
+
+        var productWithRelations = await _context.Products
+        .Include(p => p.Category)
+        .Include(p => p.Brand)
+        .Include(p => p.Sport)
+        .FirstOrDefaultAsync(p => p.Id == id);
+
+        return productWithRelations?.ToDto();
     }
 
     public async Task<bool> Delete(int id)
     {
         var currentProduct = await _context.Products.FindAsync(id);
-
-        if (currentProduct == null)
-            return false;
+        if (currentProduct == null) return false;
 
         _context.Remove(currentProduct);
         await _context.SaveChangesAsync();

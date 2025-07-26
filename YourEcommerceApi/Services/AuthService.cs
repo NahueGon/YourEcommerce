@@ -1,19 +1,18 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.AuthDtos.LoginDtos;
 using YourEcommerceApi.DTOs.AuthDtos.RegisterDtos;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Users;
 
 namespace YourEcommerceApi.Services;
 
 public class AuthService : IAuthService
 {
-    AppDbContext _context;
+    private readonly AppDbContext _context;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IConfiguration _configuration;
 
@@ -97,6 +96,5 @@ public class AuthService : IAuthService
             Lastname = user.Lastname,
             Email = user.Email
         };
-        
     }
 }

@@ -5,9 +5,9 @@ using YourEcommerceApi.Services;
 
 namespace YourEcommerceApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
-    [Tags("Autentication")]
+    [Tags("Authentication")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -21,6 +21,7 @@ namespace YourEcommerceApi.Controllers
         {
             var result = await _authService.Authenticate(loginDto);
             if (result == null) return Unauthorized(new { message = "Credenciales inválidas" });
+
             return Ok(result);
         }
 
@@ -29,6 +30,7 @@ namespace YourEcommerceApi.Controllers
         {
             var result = await _authService.Register(registerDto);
             if (result == null) return BadRequest(new { message = "Ya existe un usuario con ese email." });
+            
             return Ok(result);
         }
     }

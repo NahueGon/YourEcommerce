@@ -1,13 +1,12 @@
-using YourEcommerceApi.DTOs.Product;
 using YourEcommerceApi.DTOs.ProductDtos;
 
-namespace YourEcommerceApi.DTOs.Brand;
+namespace YourEcommerceApi.DTOs.BrandDtos;
 
 public class BrandResponseDto
 {
     public int Id { get; set; }
     public required string Name { get; set; }
-    public string? Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
-    public List<ProductDto> Products { get; set; } = new();
+    public List<ProductDto> Products { get; set; } = [];
 }

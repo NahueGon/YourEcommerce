@@ -1,16 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
-using YourEcommerceApi.DTOs.Brand;
-using YourEcommerceApi.DTOs.Product;
-using YourEcommerceApi.DTOs.ProductDtos;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.DTOs.BrandDtos;
+using YourEcommerceApi.Extensions;
+using YourEcommerceApi.Models.Products;
 using YourEcommerceApi.Services.Interfaces;
 
 namespace YourEcommerceApi.Services;
 
 public class BrandService : IBrandService
 {
-    AppDbContext _context;
+    private readonly AppDbContext _context;
 
     public BrandService(AppDbContext dbContext)
     {
@@ -23,18 +22,7 @@ public class BrandService : IBrandService
             .Include(b => b.Products)
             .ToListAsync();
 
-        return brands.Select(b => new BrandResponseDto
-        {
-            Id = b.Id,
-            Name = b.Name,
-            Description = b.Description,
-            Products = b.Products?
-                .Select(p => new ProductDto
-                {
-                    Id = p.Id,
-                    Name = p.Name
-                }).ToList() ?? new List<ProductDto>()
-        });
+        return brands.Select(b => b.ToDto()).ToList();
     }
 
     public async Task<BrandResponseDto?> Get(int id)
@@ -42,22 +30,9 @@ public class BrandService : IBrandService
         var brand = await _context.Brands
             .Include(b => b.Products)
             .FirstOrDefaultAsync(b => b.Id == id);
+        if (brand == null) return null;
 
-        if (brand == null)
-            return null;
-
-        return new BrandResponseDto
-        {
-            Id = brand.Id,
-            Name = brand.Name,
-            Description = brand.Description,
-            Products = brand.Products?
-                .Select(p => new ProductDto
-                {
-                    Id = p.Id,
-                    Name = p.Name
-                }).ToList() ?? new List<ProductDto>()
-        };
+        return brand.ToDto();
     }
 
     public async Task<BrandResponseDto> Save(BrandCreateDto brandDto)
@@ -71,20 +46,13 @@ public class BrandService : IBrandService
         _context.Brands.Add(brand);
         await _context.SaveChangesAsync();
 
-        return new BrandResponseDto
-        {
-            Id = brand.Id,
-            Name = brand.Name,
-            Description = brand.Description,
-        };
+        return brand.ToDto();
     }
 
     public async Task<bool> Update(int id, BrandUpdateDto brandDto)
     {
         var currentBrand = await _context.Brands.FindAsync(id);
-
-        if (currentBrand == null)
-            return false;
+        if (currentBrand == null) return false;
 
         currentBrand.Name = brandDto.Name;
         currentBrand.Description = brandDto.Description;
@@ -97,15 +65,11 @@ public class BrandService : IBrandService
     public async Task<bool> Delete(int id)
     {
         var currentBrand = await _context.Brands.FindAsync(id);
-
-        if (currentBrand == null)
-            return false;
+        if (currentBrand == null) return false;
             
         _context.Remove(currentBrand);
         await _context.SaveChangesAsync();
 
         return true;
     }
-
-    
 }

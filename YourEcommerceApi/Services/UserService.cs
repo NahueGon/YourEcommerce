@@ -2,15 +2,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.UserDtos;
-using YourEcommerceApi.Models;
 using YourEcommerceApi.Services.Interfaces;
 using YourEcommerceApi.Extensions;
+using YourEcommerceApi.Models.Users;
 
 namespace YourEcommerceApi.Services;
 
 public class UserService : IUserService
 {
-    AppDbContext _context;
+    private readonly AppDbContext _context;
     private readonly IPasswordHasher<User> _passwordHasher;
 
     public UserService(AppDbContext appDbContext, IPasswordHasher<User> hasher)
@@ -29,7 +29,6 @@ public class UserService : IUserService
     public async Task<UserResponseDto?> Get(int id)
     {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
-
         if (user == null) return null;
 
         return user.ToDto();
@@ -38,7 +37,6 @@ public class UserService : IUserService
     public async Task<UserResponseDto?> GetByEmail(string email)
     {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
-
         if (user == null) return null;
 
         return user.ToDto();

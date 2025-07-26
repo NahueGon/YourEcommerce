@@ -1,4 +1,4 @@
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Users;
 
 namespace YourEcommerceApi.DTOs.UserDtos;
 

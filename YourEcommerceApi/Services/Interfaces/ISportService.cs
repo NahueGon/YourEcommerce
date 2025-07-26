@@ -1,4 +1,4 @@
-using YourEcommerceApi.DTOs.Sport;
+using YourEcommerceApi.DTOs.SportDtos;
 
 namespace YourEcommerceApi.Services.Interfaces;
 

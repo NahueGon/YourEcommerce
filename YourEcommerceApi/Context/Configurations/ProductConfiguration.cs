@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Products;
 
 namespace YourEcommerceApi.Context.Configurations;
 
@@ -16,7 +16,6 @@ public class ProductConfiguration  : IEntityTypeConfiguration<Product>
             .HasMaxLength(150);
 
         builder.Property(p => p.Description)
-            .IsRequired(false)
             .HasMaxLength(250);
 
         builder.Property(p => p.Price)
@@ -33,23 +32,32 @@ public class ProductConfiguration  : IEntityTypeConfiguration<Product>
             .HasDefaultValueSql("GETDATE()");
 
         builder.Property(p => p.UpdatedAt)
-             .HasDefaultValueSql("GETDATE()")
-             .ValueGeneratedOnAddOrUpdate();
-
-        builder.HasOne(p => p.Subcategory)
-            .WithMany(sb => sb.Products)
-            .HasForeignKey(p => p.SubcategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasDefaultValueSql("GETDATE()")
+            .ValueGeneratedOnAddOrUpdate();
 
         builder.HasOne(p => p.Brand)
-            .WithMany(sb => sb.Products)
+            .WithMany(b => b.Products)
             .HasForeignKey(p => p.BrandId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
 
-        builder.HasDiscriminator<string>("ProductType")
-            .HasValue<Shoe>("Shoe")
-            .HasValue<Cloth>("Cloth")
-            .HasValue<Accessory>("Accessory");
+        builder.HasOne(p => p.Sport)
+            .WithMany(s => s.Products)
+            .HasForeignKey(p => p.SportId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
+
+        builder.HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(p => p.ProductTags)
+            .WithOne(pt => pt.Product)
+            .HasForeignKey(pt => pt.ProductId);
+
+        builder.HasMany(p => p.ProductAttributes)
+            .WithOne(pa => pa.Product)
+            .HasForeignKey(pa => pa.ProductId);
     }
-    
 }

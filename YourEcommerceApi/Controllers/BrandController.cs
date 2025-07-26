@@ -1,14 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using YourEcommerceApi.DTOs.Brand;
+using YourEcommerceApi.DTOs.BrandDtos;
 using YourEcommerceApi.Services.Interfaces;
 
 namespace YourEcommerceApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/brands")]
     [ApiController]
+    [Tags("Brands")]
     public class BrandController : ControllerBase
     {
-        IBrandService _brandService;
+        private readonly IBrandService _brandService;
 
         public BrandController(IBrandService service)
         {
@@ -19,6 +20,7 @@ namespace YourEcommerceApi.Controllers
         public async Task<ActionResult<IEnumerable<BrandResponseDto>>> GetBrands()
         {
             var brands = await _brandService.GetAll();
+            if (brands == null || !brands.Any()) return NotFound("No se encontraron marcas.");
 
             return Ok(brands);
         }
@@ -27,9 +29,7 @@ namespace YourEcommerceApi.Controllers
         public async Task<ActionResult<BrandResponseDto>> GetBrand(int id)
         {
             var brand = await _brandService.Get(id);
-
-            if (brand == null)
-                return NotFound("Marca no encontrada");
+            if (brand == null) return NotFound("Marca no encontrada");
 
             return Ok(brand);
         }
@@ -37,9 +37,7 @@ namespace YourEcommerceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<BrandResponseDto>> CreateBrand(BrandCreateDto brandDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+            if (!ModelState.IsValid) return BadRequest(ModelState);
             var responseDto = await _brandService.Save(brandDto);
 
             return CreatedAtAction(nameof(GetBrand), new { id = responseDto.Id }, responseDto);
@@ -48,13 +46,10 @@ namespace YourEcommerceApi.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateBrand(int id, BrandUpdateDto brandDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var updated = await _brandService.Get(id);
-
-            if (updated == null)
-                return NotFound("Marca no encontrada");
+            if (updated == null) return NotFound("Marca no encontrada");
 
             await _brandService.Update(id, brandDto);
 
@@ -65,11 +60,10 @@ namespace YourEcommerceApi.Controllers
         public async Task<ActionResult> DeleteBrand(int id)
         {
             var brand = await _brandService.Get(id);
-
-            if (brand == null)
-                return NotFound("Marca no encontrada");
+            if (brand == null) return NotFound("Marca no encontrada");
 
             await _brandService.Delete(id);
+
             return NoContent();
         }
     }

@@ -1,5 +1,5 @@
 using YourEcommerceApi.DTOs.UserDtos;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Users;
 
 namespace YourEcommerceApi.Extensions;
 

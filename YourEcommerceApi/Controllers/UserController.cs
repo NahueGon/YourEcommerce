@@ -4,12 +4,12 @@ using YourEcommerceApi.Services.Interfaces;
 
 namespace YourEcommerceApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     [Tags("Users")]
     public class UserController : ControllerBase
     {
-        IUserService _userService;
+        private readonly IUserService _userService;
 
         public UserController(IUserService service)
         {
@@ -21,6 +21,7 @@ namespace YourEcommerceApi.Controllers
         {
             var users = await _userService.GetAll();
             if (users == null || !users.Any()) return NotFound("No se encontraron usuarios.");
+
             return Ok(users);
         }
 
@@ -29,6 +30,7 @@ namespace YourEcommerceApi.Controllers
         {
             var user = await _userService.Get(id);
             if (user == null) return NotFound("Usuario no encontrado");
+
             return Ok(user);
         }
 
@@ -37,6 +39,7 @@ namespace YourEcommerceApi.Controllers
         {
             var user = await _userService.GetByEmail(email);
             if (user == null) return NotFound("Usuario no encontrado");
+
             return Ok(user);
         }
 
@@ -45,6 +48,7 @@ namespace YourEcommerceApi.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var responseDto = await _userService.Save(userDto);
+
             return CreatedAtAction(nameof(GetUser), new { id = responseDto.Id }, responseDto);
         }
 
@@ -52,8 +56,10 @@ namespace YourEcommerceApi.Controllers
         public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto userDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var updated = await _userService.Update(id, userDto);
             if (updated == null) return NotFound("Usuario no encontrado o datos inválidos");
+
             return Ok(updated);
         }
 
@@ -62,6 +68,7 @@ namespace YourEcommerceApi.Controllers
         {
             var deleted = await _userService.Delete(id);
             if (!deleted) return NotFound("Usuario no encontrado");
+
             return Ok(new { message = "Usuario eliminado correctamente" });
         }
     }

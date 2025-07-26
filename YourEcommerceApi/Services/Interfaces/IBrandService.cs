@@ -1,4 +1,4 @@
-using YourEcommerceApi.DTOs.Brand;
+using YourEcommerceApi.DTOs.BrandDtos;
 
 namespace YourEcommerceApi.Services.Interfaces;
 

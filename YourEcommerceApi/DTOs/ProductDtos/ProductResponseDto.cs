@@ -1,25 +1,31 @@
+using YourEcommerceApi.DTOs.ProductAttributeDtos;
 using YourEcommerceApi.DTOs.BrandDtos;
-using YourEcommerceApi.DTOs.SubCategory;
-using YourEcommerceApi.Models;
-using System.Text.Json.Serialization;
-using YourEcommerceApi.DTOs.ProductDtos.ShoeDtos;
-using YourEcommerceApi.DTOs.ProductDtos.AccessoryDtos;
+using YourEcommerceApi.DTOs.CategoryDtos;
+using YourEcommerceApi.DTOs.ProductTagDtos;
+using YourEcommerceApi.DTOs.SportDtos;
+using YourEcommerceApi.Models.Products;
+using YourEcommerceApi.DTOs.ProductVariantDtos;
 
-namespace YourEcommerceApi.DTOs.Product;
+namespace YourEcommerceApi.DTOs.ProductDtos;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "productType")]
-[JsonDerivedType(typeof(ClothResponseDto), "Cloth")]
-[JsonDerivedType(typeof(ShoeResponseDto), "Shoe")]
-[JsonDerivedType(typeof(AccessoryResponseDto), "Accessory")]
 public class ProductResponseDto
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
+    public required string Name { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
-    public int Stock { get; set; }
-
-    public Gender Gender { get; set; }
+    public int Stock { get; set; } = 0;
+    public bool IsActive { get; set; } = true;
+    
+    public Gender Gender { get; set; } = Gender.Unknown;
     public BrandDto? Brand { get; set; }
-    public SubcategoryDto? Subcategory { get; set; }
+    public SportDto? Sport { get; set; }
+    public CategoryDto? Category { get; set; }
+
+    public ICollection<ProductTagResponseDto> ProductTags { get; set; } = new List<ProductTagResponseDto>();
+    public ICollection<ProductAttributeDto> ProductAttributes { get; set; } = new List<ProductAttributeDto>();
+    public ICollection<ProductVariantDto> ProductVariants { get; set; } = new List<ProductVariantDto>();
+
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }

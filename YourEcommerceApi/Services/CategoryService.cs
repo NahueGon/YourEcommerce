@@ -3,14 +3,14 @@ using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs;
 using YourEcommerceApi.DTOs.Category;
 using YourEcommerceApi.Extensions;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Products;
 using YourEcommerceApi.Services.Interfaces;
 
 namespace YourEcommerceApi.Services;
 
 public class CategoryService : ICategoryService
 {
-    AppDbContext _context;
+    private readonly AppDbContext _context;
 
     public CategoryService(AppDbContext dbContext)
     {
@@ -20,8 +20,7 @@ public class CategoryService : ICategoryService
     public async Task<IEnumerable<CategoryResponseDto>> GetAll()
     {
         var categories = await _context.Categories
-            .Include(c => c.ProductTypes)
-                .ThenInclude(pt => pt.Subcategories)
+            .Include(c => c.Products)
             .ToListAsync();
 
         return categories.Select(c => c.ToDto());
@@ -30,7 +29,7 @@ public class CategoryService : ICategoryService
     public async Task<CategoryResponseDto?> Get(int id)
     {
         var category = await _context.Categories
-            .Include(c => c.ProductTypes)
+            .Include(c => c.Products)
             .FirstOrDefaultAsync(c => c.Id == id);
         if (category == null) return null;
 
@@ -56,7 +55,7 @@ public class CategoryService : ICategoryService
         if (categoryDto == null) return null;
 
         var currentCategory = await _context.Categories
-            .Include(c => c.ProductTypes)
+            .Include(c => c.Products)
             .FirstOrDefaultAsync(c => c.Id == id);
         if (currentCategory == null) return null;
 

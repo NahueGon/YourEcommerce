@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Users;
 using YourEcommerceApi.Services;
 using YourEcommerceApi.Services.Interfaces;
 using YourEcommerceApi.Validators;
@@ -23,11 +23,14 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
-builder.Services.AddScoped<ISubcategoryService, SubcategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ISportService, SportService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
+builder.Services.AddScoped<IProductColorService, ProductColorService>();
+builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
+builder.Services.AddScoped<IProductTagService, ProductTagService>();
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
@@ -73,5 +76,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/swagger");
+    return Task.CompletedTask;
+});
 
 app.Run();

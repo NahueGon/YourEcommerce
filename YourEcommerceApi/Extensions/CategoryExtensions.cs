@@ -1,5 +1,6 @@
 using YourEcommerceApi.DTOs.Category;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.DTOs.ProductDtos;
+using YourEcommerceApi.Models.Products;
 
 namespace YourEcommerceApi.Extensions;
 
@@ -11,11 +12,13 @@ public static class CategoryExtensions
         {
             Id = category.Id,
             Name = category.Name,
-            Description = category.Description,
-            ProductTypes = category.ProductTypes?
-                .Select(
-                    pt => pt.ToDto()
-                ).ToList() ?? new()
+            Description = category.Description ?? string.Empty,
+            Products = category.Products?
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    Name = p.Name
+                }).ToList() ?? []
         };
     }
 }

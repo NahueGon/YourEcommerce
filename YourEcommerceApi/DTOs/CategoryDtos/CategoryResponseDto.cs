@@ -1,12 +1,12 @@
-using YourEcommerceApi.DTOs.ProductType;
+using YourEcommerceApi.DTOs.ProductDtos;
 
 namespace YourEcommerceApi.DTOs.Category;
 
 public class CategoryResponseDto
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string? Description { get; set; }
+    public required string Name { get; set; }
+    public string Description { get; set; } = string.Empty;
 
-    public List<ProductTypeResponseDto> ProductTypes { get; set; } = new();
+    public List<ProductDto> Products { get; set; } = [];
 }

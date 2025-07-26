@@ -1,4 +1,5 @@
 using YourEcommerceApi.DTOs.Product;
+using YourEcommerceApi.DTOs.ProductDtos;
 
 namespace YourEcommerceApi.Services.Interfaces;
 
@@ -6,9 +7,7 @@ public interface IProductService
 {
     Task<IEnumerable<ProductResponseDto>> GetAll();
     Task<ProductResponseDto?> Get(int id);
-    Task<IEnumerable<ProductResponseDto>> GetAllByType(string type);
-    Task<ProductResponseDto> SaveCloth(ClothCreateDto clothDto);
-    Task<ProductResponseDto> SaveShoe(ShoeCreateDto shoeDto);
-    Task<ProductResponseDto> SaveAccessory(AccessoryCreateDto accessoryDto);
+    Task<ProductResponseDto> Save(ProductCreateDto productDto);
+    Task<ProductResponseDto?> Update(int id, ProductUpdateDto productDto);
     Task<bool> Delete(int id);
 }

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using YourEcommerceApi.Models;
+using YourEcommerceApi.Models.Products;
 
 namespace YourEcommerceApi.Context.Configurations;
 public class SportConfiguration : IEntityTypeConfiguration<Sport>
@@ -18,14 +18,9 @@ public class SportConfiguration : IEntityTypeConfiguration<Sport>
             .IsRequired(false)
             .HasMaxLength(250);
 
-        builder.HasMany(s => s.Shoes)
-            .WithOne(sh => sh.Sport)
-            .HasForeignKey(sh => sh.SportId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasMany(s => s.Clothes)
-            .WithOne(c => c.Sport)
-            .HasForeignKey(c => c.SportId)
+        builder.HasMany(s => s.Products)
+            .WithOne(p => p.Sport)
+            .HasForeignKey(p => p.SportId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
