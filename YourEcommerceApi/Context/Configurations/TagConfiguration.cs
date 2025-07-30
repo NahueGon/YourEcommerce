@@ -14,12 +14,11 @@ public class TagConfiguration : IEntityTypeConfiguration<Tag>
             .IsRequired()
             .HasMaxLength(150);
 
-        builder.Property(t => t.Group)
-            .IsRequired(false);
+        builder.Property(t => t.Group);
 
         builder.HasMany(t => t.ProductTags)
             .WithOne(pt => pt.Tag)
             .HasForeignKey(p => p.TagId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

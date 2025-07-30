@@ -64,7 +64,7 @@ namespace YourEcommerceApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteSubcategory(int id)
+        public async Task<ActionResult> DeleteUser(int id)
         {
             var deleted = await _userService.Delete(id);
             if (!deleted) return NotFound("Usuario no encontrado");

@@ -5,35 +5,34 @@ using YourEcommerce.ViewModels;
 
 public class NavbarViewComponent : ViewComponent
 {
-    private readonly ICategoryService _categoryService;
+    private readonly IProductService _productService;
 
-    public NavbarViewComponent(ICategoryService service)
+    public NavbarViewComponent(IProductService productService)
     {
-        _categoryService = service;
+        _productService = productService;
     }
 
-    public async Task<IViewComponentResult> InvokeAsync()
+   public async Task<IViewComponentResult> InvokeAsync()
     {
         var model = new NavbarViewModel();
         var user = HttpContext.User;
+        var products = await _productService.GetAllProducts();
+        var allGenders = Enum.GetValues(typeof(Gender)).Cast<Gender>();
 
-        var categories  = await _categoryService.GetCategoriesAsync();
-        model.Categories = categories ?? new List<CategoryViewModel>();
+        var usedGenders = products.Select(p => p.Gender).Distinct().ToList();
+
+        model.Genders = usedGenders;
 
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            var userName = user.FindFirst(ClaimTypes.Name)?.Value ?? "Usuario";
-            var email = user.FindFirst(ClaimTypes.Email)?.Value ?? "";
-            var role = user.FindFirst(ClaimTypes.Role)?.Value ?? "Customer";
-
             model.User = new UserViewModel
             {
-                Name = userName,
-                Email = email,
-                Role = role
+                Name = user.FindFirst(ClaimTypes.Name)?.Value ?? "Usuario",
+                Email = user.FindFirst(ClaimTypes.Email)?.Value ?? "",
+                Role = user.FindFirst(ClaimTypes.Role)?.Value ?? "Customer"
             };
         }
-
+    
         return View(model);
     }
 }

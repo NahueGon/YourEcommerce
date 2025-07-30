@@ -43,17 +43,18 @@ namespace YourEcommerceApi.Controllers
             return CreatedAtAction(nameof(GetTag), new { id = responseDto.Id }, responseDto);
         }
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateTag(int id, TagUpdateDto tagDto)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<TagResponseDto>> UpdateTag(int id, TagUpdateDto tagDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var updated = await _tagService.Get(id);
             if (updated == null) return NotFound("Etiqueta no encontrada.");
 
-            await _tagService.Update(id, tagDto);
+            var updatedTag = await _tagService.Update(id, tagDto);
+            if (updatedTag == null) return NotFound("Etiqueta no encontrada.");
 
-            return NoContent();
+            return Ok(updatedTag);
         }
 
         [HttpDelete]

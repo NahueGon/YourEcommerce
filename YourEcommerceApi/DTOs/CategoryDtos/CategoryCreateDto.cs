@@ -1,4 +1,4 @@
-namespace YourEcommerceApi.DTOs;
+namespace YourEcommerceApi.DTOs.CategoryDtos;
 
 public class CategoryCreateDto
 {

@@ -1,4 +1,4 @@
-using YourEcommerceApi.DTOs.Category;
+using YourEcommerceApi.DTOs.CategoryDtos;
 using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.Models.Products;
 

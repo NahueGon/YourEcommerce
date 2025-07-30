@@ -43,17 +43,18 @@ namespace YourEcommerceApi.Controllers
             return CreatedAtAction(nameof(GetSport), new { id = responseDto.Id }, responseDto);
         }
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateSport(int id, SportUpdateDto sportDto)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<SportResponseDto>> UpdateSport(int id, SportUpdateDto sportDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var updated = await _sportService.Get(id);
             if (updated == null) return NotFound("Deporte no encontrado");
 
-            await _sportService.Update(id, sportDto);
+            var updatedSport = await _sportService.Update(id, sportDto);
+            if (updatedSport == null) return NotFound("Deporte no encontrada");
 
-            return NoContent();
+            return Ok(updatedSport);
         }
 
         [HttpDelete]

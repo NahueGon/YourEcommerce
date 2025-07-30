@@ -336,3 +336,5 @@ C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Swashbuckle.A
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidation.dll
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidation.AspNetCore.dll
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidation.DependencyInjectionExtensions.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\AutoMapper.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

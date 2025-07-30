@@ -1,4 +1,19 @@
+@using YourEcommerce.ViewModels
 @model YourEcommerce.ViewModels.NavbarViewModel
+
+@functions {
+    public string GetGenderName(Gender gender)
+    {
+        return gender switch
+        {
+            Gender.Unisex => "Unisex",
+            Gender.Male => "Hombres",
+            Gender.Female => "Mujeres",
+            Gender.Kids => "Niños",
+            _ => "Desconocido"
+        };
+    }
+}
 
 <nav class="bg-white border-gray-200 dark:bg-gray-900">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 py-2 animate__animated animate__fadeIn animate__faster">
@@ -14,66 +29,74 @@
                 <i data-lucide="shopping-cart" class="size-6"></i>
             </button>
             @await Html.PartialAsync("_ThemeButton")
-            @if (Model.User != null && !string.IsNullOrEmpty(Model.User?.Name))
-            {
-                <button type="button" class="cursor-pointer flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 order-3" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-                    <span class="sr-only">Open user menu</span>
-                    <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo">
-                </button>
-                <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm overflow-hidden dark:bg-gray-700 dark:divide-gray-600 animate__animated animate__fadeIn animate__faster" id="user-dropdown">
-                    <div class="px-4 py-3 max-w-50">
-                        <span class="block text-gray-900 dark:text-white">@Model.User.Name</span>
-                        <span class="block text-sm text-gray-500 truncate dark:text-gray-400">@Model.User.Email</span>
-                    </div>
+           
+            <button type="button" class="cursor-pointer flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 order-3" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                <span class="sr-only">Open user menu</span>
+                <img class="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo">
+            </button>
+            <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm overflow-hidden dark:bg-gray-700 dark:divide-gray-600 animate__animated animate__fadeIn animate__faster" id="user-dropdown">
+                @if (Model.User != null && !string.IsNullOrEmpty(Model.User?.Name))
+                {
+                <div class="px-4 py-3 max-w-50">
+                    <span class="block text-gray-900 dark:text-white">@Model.User.Name</span>
+                    <span class="block text-sm text-gray-500 truncate dark:text-gray-400">@Model.User.Email</span>
+                </div>
+                <ul class="py-2" aria-labelledby="user-menu-button">
+                    <li>
+                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                            <i data-lucide="user" class="size-5"></i>
+                            Perfil
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                            <i data-lucide="home" class="size-5"></i>
+                            Home
+                        </a>
+                    </li>
+                    @if (Model.User != null && Model.User.Role == "Admin")
+                    {
+                        <li>
+                            <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                <i data-lucide="chart-bar-big" class="size-5"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                    }
+                </ul>
+                <form asp-action="Logout" asp-controller="Auth" method="post" class="block text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                    <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 btn btn-danger cursor-pointer text-start">
+                        <i data-lucide="arrow-left-from-line" class="size-5"></i>
+                        Cerrar sesión
+                    </button>
+                    @Html.AntiForgeryToken()
+                </form>
+                }
+                else
+                {
                     <ul class="py-2" aria-labelledby="user-menu-button">
                         <li>
-                            <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                <i data-lucide="user" class="size-5"></i>
-                                Perfil
+                            <a asp-controller="Auth" asp-action="Login" class="items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white hidden md:flex">
+                                Iniciar sesión
                             </a>
+
                         </li>
                         <li>
-                            <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                <i data-lucide="home" class="size-5"></i>
-                                Home
+                            <a asp-controller="Auth" asp-action="Register" class="items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white hidden md:flex">
+                                Regístrate
                             </a>
                         </li>
-                        @if (Model.User != null && Model.User.Role == "Admin")
-                        {
-                            <li>
-                                <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                    <i data-lucide="chart-bar-big" class="size-5"></i>
-                                    Dashboard
-                                </a>
-                            </li>
-                        }
                     </ul>
-                    <form asp-action="Logout" asp-controller="Auth" method="post" class="block text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                        <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 btn btn-danger cursor-pointer text-start">
-                            <i data-lucide="arrow-left-from-line" class="size-5"></i>
-                            Cerrar sesión
-                        </button>
-                        @Html.AntiForgeryToken()
-                    </form>
-                </div>
-            }
-            else
-            {
-                <a asp-controller="Auth" asp-action="Login" class="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg px-3 py-2 text-sm text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-                    Iniciar sesión
-                </a>
-                <a asp-controller="Auth" asp-action="Register" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-3 py-2 text-sm text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
-                    Regístrate
-                </a>
-            }
+                }
+            </div>
         </div>
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
-            <ul class="flex gap-8 font-medium mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-                @foreach (var category in Model.Categories)
+            <ul class="flex gap-6 font-medium mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                @foreach (var gender in Model.Genders)
                 {
                     <li>
-                        <a id="mega-menu-full-cta-dropdown-button-@category.Id" data-collapse-toggle="mega-menu-full-cta-dropdown-@category.Id" data-dropdown-placement="bottom" class="cursor-pointer flex items-center justify-between w-full py-3 px-3 font-medium text-gray-900 border-b-3 border-white dark:border-gray-900 dark:hover:border-gray-100 hover:border-b-gray-900 md:w-auto dark:text-white">
-                            @category.Name
+                        <a id="mega-menu-full-cta-dropdown-button-@((int)gender)" data-collapse-toggle="mega-menu-full-cta-dropdown-@((int)gender)" data-dropdown-placement="bottom" class="cursor-pointer flex items-center justify-between w-full py-3 px-3 font-medium text-gray-900 border-b-3 border-white dark:border-gray-900 dark:hover:border-gray-100 hover:border-b-gray-900 md:w-auto dark:text-white">
+                            @GetGenderName(gender)
                         </a>
                     </li>
                 }

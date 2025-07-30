@@ -38,8 +38,7 @@ public class ProductVariantService : IProductVariantService
         var productVariant = new ProductVariant
         {
             Size = productVariantDto.Size,
-            Stock = productVariantDto.Stock,
-            ProductId = productVariantDto.ProductId
+            Stock = productVariantDto.Stock
         };
 
         _context.ProductVariants.Add(productVariant);

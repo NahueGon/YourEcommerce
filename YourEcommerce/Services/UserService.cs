@@ -15,7 +15,7 @@ public class UserService : IUserService
 
     public async Task<UserViewModel?> GetByEmail(string  email)
     {
-        var response = await _httpClient.GetAsync($"api/user/email?email={email}");
+        var response = await _httpClient.GetAsync($"api/users/email?email={email}");
 
         if (!response.IsSuccessStatusCode) return null;
    

@@ -6,7 +6,7 @@ public class Product
     public required string Name { get; set; }
     public string? Description { get; set; }
     public decimal Price { get; set; }
-    public int Stock { get; set; }
+    public int TotalStock => ProductVariants?.Sum(v => v.Stock) ?? 0;
     public Gender Gender { get; set; }
 
     public int? BrandId { get; set; }

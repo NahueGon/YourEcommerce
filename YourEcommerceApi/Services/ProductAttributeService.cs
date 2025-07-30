@@ -38,8 +38,7 @@ public class ProductAttributeService : IProductAttributeService
         var productAttribute = new ProductAttribute
         {
             Key = productAttributeDto.Key,
-            Value = productAttributeDto.Value,
-            ProductId = productAttributeDto.ProductId
+            Value = productAttributeDto.Value
         };
 
         _context.ProductAttributes.Add(productAttribute);
@@ -55,7 +54,6 @@ public class ProductAttributeService : IProductAttributeService
 
         currentProductAttribute.Key = productAttributeDto.Key;
         currentProductAttribute.Value = productAttributeDto.Value;
-        currentProductAttribute.ProductId = productAttributeDto.ProductId;
 
         await _context.SaveChangesAsync();
 

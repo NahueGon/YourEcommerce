@@ -1,6 +1,6 @@
 using YourEcommerceApi.DTOs.ProductDtos;
 
-namespace YourEcommerceApi.DTOs.Category;
+namespace YourEcommerceApi.DTOs.CategoryDtos;
 
 public class CategoryResponseDto
 {

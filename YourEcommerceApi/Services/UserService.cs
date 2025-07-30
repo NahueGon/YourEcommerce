@@ -3,62 +3,60 @@ using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.UserDtos;
 using YourEcommerceApi.Services.Interfaces;
-using YourEcommerceApi.Extensions;
 using YourEcommerceApi.Models.Users;
+using AutoMapper;
 
 namespace YourEcommerceApi.Services;
 
 public class UserService : IUserService
 {
     private readonly AppDbContext _context;
+    private readonly IMapper  _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
-    public UserService(AppDbContext appDbContext, IPasswordHasher<User> hasher)
+    public UserService(AppDbContext appDbContext, IMapper  mapper, IPasswordHasher<User> hasher)
     {
         _context = appDbContext;
+        _mapper = mapper;
         _passwordHasher = hasher;
     }
 
     public async Task<IEnumerable<UserResponseDto>> GetAll()
     {
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.Users
+            .ToListAsync();
 
-        return users.Select(user => user.ToDto());
+        return _mapper.Map<List<UserResponseDto>>(users);
     }
 
     public async Task<UserResponseDto?> Get(int id)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
+        var user = await _context.Users
+            .FirstOrDefaultAsync(user => user.Id == id);
         if (user == null) return null;
 
-        return user.ToDto();
+        return _mapper.Map<UserResponseDto>(user);
     }
 
     public async Task<UserResponseDto?> GetByEmail(string email)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
+        var user = await _context.Users
+            .FirstOrDefaultAsync(user => user.Email == email);
         if (user == null) return null;
 
-        return user.ToDto();
+        return _mapper.Map<UserResponseDto>(user);
     }
 
     public async Task<UserResponseDto> Save(UserCreateDto userDto)
     {
-        var user = new User
-        {
-            Name = userDto.Name,
-            Lastname = userDto.Lastname,
-            Email = userDto.Email,
-            PhoneNumber = userDto.PhoneNumber,
-            Address = userDto.Address
-        };
+        var user = _mapper.Map<User>(userDto);
 
         user.Password = _passwordHasher.HashPassword(user, userDto.Password);
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return user.ToDto();
+        return _mapper.Map<UserResponseDto>(user);
     }
 
     public async Task<UserResponseDto?> Update(int id, UserUpdateDto? userDto)
@@ -88,7 +86,7 @@ public class UserService : IUserService
 
         await _context.SaveChangesAsync();
 
-        return currentUser.ToDto();
+        return _mapper.Map<UserResponseDto>(currentUser);
     }
 
     public async Task<bool> Delete(int id)

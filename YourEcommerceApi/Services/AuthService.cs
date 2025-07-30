@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,12 +14,14 @@ namespace YourEcommerceApi.Services;
 public class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
+    private readonly IMapper  _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly IConfiguration _configuration;
 
-    public AuthService(AppDbContext context, IPasswordHasher<User> hasher, IConfiguration configuration)
+    public AuthService(AppDbContext context, IMapper  mapper, IPasswordHasher<User> hasher, IConfiguration configuration)
     {
         _context = context;
+        _mapper = mapper;
         _passwordHasher = hasher;
         _configuration = configuration;
     }
@@ -26,22 +29,31 @@ public class AuthService : IAuthService
     public async Task<UserLoginResponseDto?> Authenticate(UserLoginDto loginDto)
     {
         var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == loginDto.Email);
-        if (user == null) return null;
-
-        if (string.IsNullOrEmpty(user.Password)) return null;
+        if (user == null || string.IsNullOrEmpty(user.Password))
+            return null;
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.Password, loginDto.Password);
-        if (result == PasswordVerificationResult.Failed) return null;
+        if (result == PasswordVerificationResult.Failed)
+            return null;
 
-        return GenerateJwtToken(user);
+        var tokenString = GenerateJwtToken(user);
+
+        return new UserLoginResponseDto
+        {
+            Token = tokenString,
+            Email = user.Email,
+            UserName = $"{user.Name} {user.Lastname}",
+            RefreshToken = null
+        };
     }
 
-    private UserLoginResponseDto GenerateJwtToken(User user)
+    private string GenerateJwtToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-
         var keyString = _configuration["Jwt:Key"];
-        if (string.IsNullOrEmpty(keyString)) throw new InvalidOperationException("JWT key is not configured.");
+
+        if (string.IsNullOrEmpty(keyString))
+            throw new InvalidOperationException("JWT key is not configured.");
 
         var keyBytes = Convert.FromBase64String(keyString);
         var key = new SymmetricSecurityKey(keyBytes);
@@ -58,14 +70,7 @@ public class AuthService : IAuthService
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        var tokenString = tokenHandler.WriteToken(token);
-
-        return new UserLoginResponseDto
-        {
-            Token = tokenString,
-            Email = user.Email,
-            UserName = user.Name + ' ' + user.Lastname
-        };
+        return tokenHandler.WriteToken(token);
     }
     
     public async Task<UserRegisterResponseDto?> Register(UserRegisterCreateDto registerDto)
@@ -78,23 +83,12 @@ public class AuthService : IAuthService
         if (existingUser != null)
             return null;
     
-        var user = new User
-        {
-            Name = registerDto.Name,
-            Lastname = registerDto.Lastname,
-            Email = registerDto.Email
-        };
-
+        var user = _mapper.Map<User>(registerDto);
         user.Password = _passwordHasher.HashPassword(user, registerDto.Password);
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        return new UserRegisterResponseDto
-        {
-            Name = user.Name,
-            Lastname = user.Lastname,
-            Email = user.Email
-        };
+        return _mapper.Map<UserRegisterResponseDto>(user);
     }
 }

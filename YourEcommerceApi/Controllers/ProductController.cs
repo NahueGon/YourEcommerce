@@ -39,13 +39,13 @@ namespace YourEcommerceApi.Controllers
         public async Task<IActionResult> CreateProduct([FromBody] ProductCreateDto productDto)
         {
             var created = await _productService.Save(productDto);
-            if (created == null) return BadRequest("Marca o deporte no encontrados.");
+            if (created == null) return BadRequest("Categoria, Marca o deporte no encontrados.");
 
             return CreatedAtAction(nameof(GetProduct), new { id = created.Id }, created);
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<ProductResponseDto>> UpdateProduct(int id, ProductUpdateDto productDto)
+        public async Task<ActionResult<ProductResponseDto>> UpdateProduct(int id, [FromBody] ProductUpdateDto productDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

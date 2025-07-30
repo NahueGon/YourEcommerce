@@ -1,8 +1,7 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
-using YourEcommerceApi.DTOs;
-using YourEcommerceApi.DTOs.Category;
-using YourEcommerceApi.Extensions;
+using YourEcommerceApi.DTOs.CategoryDtos;
 using YourEcommerceApi.Models.Products;
 using YourEcommerceApi.Services.Interfaces;
 
@@ -11,10 +10,12 @@ namespace YourEcommerceApi.Services;
 public class CategoryService : ICategoryService
 {
     private readonly AppDbContext _context;
+    private readonly IMapper  _mapper;
 
-    public CategoryService(AppDbContext dbContext)
+    public CategoryService(AppDbContext dbContext, IMapper mapper)
     {
         _context = dbContext;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<CategoryResponseDto>> GetAll()
@@ -23,7 +24,7 @@ public class CategoryService : ICategoryService
             .Include(c => c.Products)
             .ToListAsync();
 
-        return categories.Select(c => c.ToDto());
+        return _mapper.Map<List<CategoryResponseDto>>(categories);
     }
 
     public async Task<CategoryResponseDto?> Get(int id)
@@ -33,21 +34,17 @@ public class CategoryService : ICategoryService
             .FirstOrDefaultAsync(c => c.Id == id);
         if (category == null) return null;
 
-        return category.ToDto();
+        return _mapper.Map<CategoryResponseDto>(category);
     }
 
     public async Task<CategoryResponseDto> Save(CategoryCreateDto categoryDto)
     {
-        var category = new Category
-        {
-            Name = categoryDto.Name,
-            Description = categoryDto.Description
-        };
+        var category = _mapper.Map<Category>(categoryDto);
 
         _context.Categories.Add(category);
         await _context.SaveChangesAsync();
 
-        return category.ToDto();
+        return _mapper.Map<CategoryResponseDto>(category);
     }
 
     public async Task<CategoryResponseDto?> Update(int id, CategoryUpdateDto? categoryDto)
@@ -61,12 +58,13 @@ public class CategoryService : ICategoryService
 
         if (!string.IsNullOrWhiteSpace(categoryDto.Name) && categoryDto.Name != currentCategory.Name)
             currentCategory.Name = categoryDto.Name;
+            
         if (!string.IsNullOrWhiteSpace(categoryDto.Description) && categoryDto.Description != currentCategory.Description)
             currentCategory.Description = categoryDto.Description;
 
         await _context.SaveChangesAsync();
 
-        return currentCategory.ToDto();
+        return _mapper.Map<CategoryResponseDto>(currentCategory);
     }
 
     public async Task<bool> Delete(int id)

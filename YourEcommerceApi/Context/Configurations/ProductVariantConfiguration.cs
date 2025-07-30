@@ -20,6 +20,6 @@ public class ProductVariantConfiguration : IEntityTypeConfiguration<ProductVaria
         builder.HasOne(pv => pv.Product)
             .WithMany(p => p.ProductVariants)
             .HasForeignKey(pv => pv.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

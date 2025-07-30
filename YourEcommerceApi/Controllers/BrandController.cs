@@ -43,17 +43,18 @@ namespace YourEcommerceApi.Controllers
             return CreatedAtAction(nameof(GetBrand), new { id = responseDto.Id }, responseDto);
         }
 
-        [HttpPut]
-        public async Task<ActionResult> UpdateBrand(int id, BrandUpdateDto brandDto)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<BrandResponseDto>> UpdateBrand(int id, BrandUpdateDto brandDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var updated = await _brandService.Get(id);
             if (updated == null) return NotFound("Marca no encontrada");
 
-            await _brandService.Update(id, brandDto);
+            var updatedBrand = await _brandService.Update(id, brandDto);
+            if (updatedBrand == null) return NotFound("Marca no encontrada");
 
-            return NoContent();
+            return Ok(updatedBrand);
         }
 
         [HttpDelete]

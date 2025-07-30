@@ -23,6 +23,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
+builder.Services.AddHttpClient("YourEcommerceApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5076/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+
 void ConfigureHttpClient(IServiceProvider serviceProvider, HttpClient client)
 {
     var apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
@@ -33,7 +39,7 @@ void ConfigureHttpClient(IServiceProvider serviceProvider, HttpClient client)
 
 builder.Services.AddHttpClient<IUserService, UserService>(ConfigureHttpClient);
 builder.Services.AddHttpClient<IAuthService, AuthService>(ConfigureHttpClient);
-builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
 

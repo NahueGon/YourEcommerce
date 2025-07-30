@@ -6,6 +6,7 @@ using YourEcommerceApi.DTOs.ProductDtos;
 using YourEcommerceApi.DTOs.ProductTagDtos;
 using YourEcommerceApi.DTOs.ProductVariantDtos;
 using YourEcommerceApi.DTOs.SportDtos;
+using YourEcommerceApi.DTOs.TagDtos;
 using YourEcommerceApi.Models.Products;
 
 namespace YourEcommerceApi.Extensions;
@@ -20,7 +21,7 @@ public static class ProductExtensions
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,
-            Stock = product.Stock,
+            TotalStock = product.TotalStock,
             Gender = product.Gender,
             Category = product.Category == null
                 ? null
@@ -50,9 +51,16 @@ public static class ProductExtensions
                     Value = pa.Value
                 }).ToList() ?? new List<ProductAttributeDto>(),
             ProductTags = product.ProductTags?
-                .Select(pt => pt.ToDto())
-                .ToList() ?? new List<ProductTagResponseDto>(),
-            ProductVariants = product.ProductVariants ?
+                .Select(pt => new ProductTagDto
+                {
+                    Tag = new TagDto 
+                    {
+                        Id = pt.Tag.Id,
+                        Name = pt.Tag.Name,
+                        Group = pt.Tag.Group
+                    }
+                }).ToList() ?? new List<ProductTagDto>(),
+            ProductVariants = product.ProductVariants?
                 .Select(pv => new ProductVariantDto
                 {
                     Size = pv.Size,

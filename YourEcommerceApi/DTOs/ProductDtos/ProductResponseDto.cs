@@ -14,15 +14,15 @@ public class ProductResponseDto
     public required string Name { get; set; } = string.Empty;
     public string? Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
-    public int Stock { get; set; } = 0;
+    public int TotalStock { get; set; }
     public bool IsActive { get; set; } = true;
     
-    public Gender Gender { get; set; } = Gender.Unknown;
+    public Gender Gender { get; set; } = Gender.Unisex;
     public BrandDto? Brand { get; set; }
     public SportDto? Sport { get; set; }
     public CategoryDto? Category { get; set; }
 
-    public ICollection<ProductTagResponseDto> ProductTags { get; set; } = new List<ProductTagResponseDto>();
+    public ICollection<ProductTagDto> ProductTags { get; set; } = new List<ProductTagDto>();
     public ICollection<ProductAttributeDto> ProductAttributes { get; set; } = new List<ProductAttributeDto>();
     public ICollection<ProductVariantDto> ProductVariants { get; set; } = new List<ProductVariantDto>();
 

@@ -35,15 +35,9 @@ public class ProductTagService : IProductTagService
     
     public async Task<ProductTagResponseDto> Save(ProductTagCreateDto productTagDto)
     {
-        var product = await _context.Products.FindAsync(productTagDto.ProductId)
-            ?? throw new InvalidOperationException($"No se encontró el producto con ID {productTagDto.ProductId}");
-        var tag = await _context.Tags.FindAsync(productTagDto.TagId)
-            ?? throw new InvalidOperationException($"No se encontró el tag con ID {productTagDto.TagId}");
         
         var productTag = new ProductTag
         {
-            ProductId = productTagDto.ProductId,
-            TagId = productTagDto.TagId
         };
 
         _context.ProductTags.Add(productTag);

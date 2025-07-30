@@ -1,4 +1,4 @@
-namespace YourEcommerceApi.DTOs.Category;
+namespace YourEcommerceApi.DTOs.CategoryDtos;
 
 public class CategoryUpdateDto
 {

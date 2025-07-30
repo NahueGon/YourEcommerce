@@ -113,9 +113,6 @@ namespace YourEcommerceApi.Migrations
                     b.Property<int?>("SportId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
@@ -376,7 +373,7 @@ namespace YourEcommerceApi.Migrations
                     b.HasOne("YourEcommerceApi.Models.Products.Tag", "Tag")
                         .WithMany("ProductTags")
                         .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
@@ -389,7 +386,7 @@ namespace YourEcommerceApi.Migrations
                     b.HasOne("YourEcommerceApi.Models.Products.Product", "Product")
                         .WithMany("ProductVariants")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");

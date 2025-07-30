@@ -22,8 +22,7 @@ public class ProductConfiguration  : IEntityTypeConfiguration<Product>
             .IsRequired()
             .HasPrecision(18, 2);
 
-        builder.Property(p => p.Stock)
-            .IsRequired();
+        builder.Ignore(p => p.TotalStock);
 
         builder.Property(p => p.Gender)
             .IsRequired();

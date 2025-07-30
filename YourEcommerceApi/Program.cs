@@ -18,6 +18,15 @@ builder.Services.AddDbContext<AppDbContext>(
     options => options.UseSqlServer(connectionString)
 );
 
+builder.Services.AddAutoMapper(
+    typeof(UserProfile),
+    typeof(ProductProfile),
+    typeof(TagProfile),
+    typeof(BrandProfile),
+    typeof(CategoryProfile),
+    typeof(SportProfile)
+);
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -27,10 +36,10 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ISportService, SportService>();
 builder.Services.AddScoped<ITagService, TagService>();
-builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
-builder.Services.AddScoped<IProductColorService, ProductColorService>();
-builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
-builder.Services.AddScoped<IProductTagService, ProductTagService>();
+// builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
+// builder.Services.AddScoped<IProductColorService, ProductColorService>();
+// builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
+// builder.Services.AddScoped<IProductTagService, ProductTagService>();
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();

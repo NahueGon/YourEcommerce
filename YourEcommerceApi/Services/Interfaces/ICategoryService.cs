@@ -1,5 +1,4 @@
-using YourEcommerceApi.DTOs;
-using YourEcommerceApi.DTOs.Category;
+using YourEcommerceApi.DTOs.CategoryDtos;
 
 namespace YourEcommerceApi.Services.Interfaces;
 

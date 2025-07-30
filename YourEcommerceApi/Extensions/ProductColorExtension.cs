@@ -12,13 +12,16 @@ public static class ProductColorExtensions
         {
             Id = productColor.Id,
             Name = productColor.Name,
-            ProductVariant = productColor.ProductVariant == null
-                ? null
-                : new ProductVariantDto
+            ProductVariants = productColor.ProductVariant == null
+            ? new List<ProductVariantDto>()
+            : new List<ProductVariantDto>
+            {
+                new ProductVariantDto
                 {
                     Size = productColor.ProductVariant.Size,
                     Stock = productColor.ProductVariant.Stock
                 }
+            }
         };
     }
 }

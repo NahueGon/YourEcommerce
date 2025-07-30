@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using YourEcommerceApi.DTOs;
-using YourEcommerceApi.DTOs.Category;
+using YourEcommerceApi.DTOs.CategoryDtos;
 using YourEcommerceApi.Services.Interfaces;
 
 namespace YourEcommerceApi.Controllers
@@ -22,6 +21,7 @@ namespace YourEcommerceApi.Controllers
         {
             var categories = await _categoryService.GetAll();
             if (categories == null || !categories.Any()) return NotFound("No se encontraron categorias.");
+            
             return Ok(categories);
         }
 
@@ -30,6 +30,7 @@ namespace YourEcommerceApi.Controllers
         {
             var category = await _categoryService.Get(id);
             if (category == null) return NotFound("Categoría no encontrada");
+
             return Ok(category);
         }
 
@@ -37,7 +38,9 @@ namespace YourEcommerceApi.Controllers
         public async Task<ActionResult<CategoryResponseDto>> CreateCategory(CategoryCreateDto categoryDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var responseDto = await _categoryService.Save(categoryDto);
+
             return CreatedAtAction(nameof(GetCategory), new { id = responseDto.Id }, responseDto);
         }
 
@@ -45,10 +48,14 @@ namespace YourEcommerceApi.Controllers
         public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(int id, CategoryUpdateDto categoryDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var updated = await _categoryService.Get(id);
             if (updated == null) return NotFound("Categoría no encontrada");
-            await _categoryService.Update(id, categoryDto);
-            return NoContent();
+            
+            var updatedCategory = await _categoryService.Update(id, categoryDto);
+            if (updatedCategory == null) return NotFound("Categoría no encontrada");
+
+            return Ok(updatedCategory);
         }
 
         [HttpDelete("{id}")]
@@ -56,7 +63,9 @@ namespace YourEcommerceApi.Controllers
         {
             var deleted = await _categoryService.Get(id);
             if (deleted == null) return NotFound("Categoría no encontrada");
+
             await _categoryService.Delete(id);
+
             return NoContent();
         }
     }
