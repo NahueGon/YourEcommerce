@@ -1,7 +1,6 @@
 using YourEcommerceApi.DTOs.ProductAttributeDtos;
 using YourEcommerceApi.DTOs.ProductTagDtos;
 using YourEcommerceApi.DTOs.ProductVariantDtos;
-using YourEcommerceApi.Models.Products;
 
 namespace YourEcommerceApi.DTOs.ProductDtos;
 
@@ -10,9 +9,9 @@ public class ProductCreateDto
     public required string Name { get; set; }
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
-    public Gender Gender { get; set; }
     
     public int? BrandId { get; set; }
+    public int? GenderId { get; set; }
     public int? SportId { get; set; }
     public int? CategoryId { get; set; }
 

@@ -1,0 +1,41 @@
+﻿@using YourEcommerce.ViewModels
+@using YourEcommerce.Helpers
+@model YourEcommerce.ViewModels.MenuDrawerViewModel
+
+<div id="sidebarDashboard"
+    class="fixed top-0 left-0 z-40 lg:relative h-full w-full sm:max-w-60 bg-neutral-900 -translate-x-full lg:translate-x-0 transition-transform border-r border-neutral-700"
+    tabindex="-1" aria-labelledby="sidebarDashboard-label">
+    <div class="flex items-center justify-between p-4 lg:hidden border-b border-neutral-700">
+        <h5 id="sidebarDashboard-label" class="text-2xl sm:text-lg pb-1 font-semibold uppercase text-white">Menu</h5>
+        <button type="button" data-drawer-hide="sidebarDashboard" aria-controls="sidebarDashboard"
+            class="text-white bg-transparent hover:bg-white hover:text-neutral-900 rounded-lg text-sm cursor-pointer">
+            <i data-lucide="x" class="size-7"></i>
+            <span class="sr-only">Close menu</span>
+        </button>
+    </div>
+    <div class="p-2 overflow-y-auto">
+        <ul class="space-y-3 font-medium">
+            <li>
+                @await Html.PartialAsync("_NavItemDashboard", new { Controller = "Dashboard", Action = "Index", Icon = "home", Text = "Inicio" })
+            </li>
+            <li>
+                @await Html.PartialAsync("_NavItemDashboard", new { Controller = "Dashboard", Action = "Users", Icon = "users", Text = "Usuarios" })
+            </li>
+            <li>
+                @await Html.PartialAsync("_NavItemDashboard", new { Controller = "Dashboard", Action = "Products", Icon = "shopping-cart", Text = "Products" })
+            </li>
+            <li>
+                @await Html.PartialAsync("_NavItemDashboard", new { Controller = "Dashboard", Action = "Categories", Icon = "chart-column-stacked", Text = "Categorías" })
+            </li>
+            <li>
+                @await Html.PartialAsync("_NavItemDashboard", new { Controller = "Dashboard", Action = "Genders", Icon = "venus-and-mars", Text = "Generos" })
+            </li>
+            <li>
+                @await Html.PartialAsync("_NavItemDashboard", new { Controller = "Dashboard", Action = "Brands", Icon = "tag", Text = "Marcas" })
+            </li>
+            <li>
+                @await Html.PartialAsync("_NavItemDashboard", new { Controller = "Dashboard", Action = "Sports", Icon = "dribbble", Text = "Deportes" })
+            </li>
+        </ul>
+    </div>
+</div>

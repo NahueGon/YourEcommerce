@@ -1,0 +1,83 @@
+﻿@using YourEcommerce.DTOs.UserDtos
+@model YourEcommerce.ViewModels.NavbarDashboardViewModel
+
+<nav class="w-full border-b border-neutral-700 bg-neutral-900 relative z-1 lg:z-50">
+    <div class="max-w-full flex flex-wrap items-center justify-between mx-auto py-3 px-4 animate__animated animate__fadeIn animate__faster">
+        <button type="button" class="cursor-pointer text-white rounded-lg lg:hidden hover:bg-white hover:text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-200 order-1" 
+            data-drawer-target="sidebarDashboard" 
+            data-drawer-show="sidebarDashboard"
+            data-drawer-backdrop="false"
+            aria-controls="sidebarDashboard">
+            <span class="sr-only">Open main menu</span>
+            <i data-lucide="align-justify" class="size-9 p-1"></i>
+        </button>
+        <a href="/" class="flex items-center space-x-1.5 rtl:space-x-reverse order-2 md:order-1">
+            <img src="~/img/icon.png" class="size-6 invert" alt="">
+            <span class="self-center text-xl font-semibold whitespace-nowrap text-white">YourEcommerce</span>
+        </a>
+        <div class="flex gap-4 items-center order-3 space-x-3 md:space-x-0 rtl:space-x-reverse">
+            @* @await Html.PartialAsync("_ThemeButton") *@
+            <button type="button" class="cursor-pointer text-sm bg-neutral-800 m-0 rounded-full focus:ring-4 focus:ring-neutral-800 order-3" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                <span class="sr-only">Open user menu</span>
+                <img class="size-10 rounded-full" 
+                    src="@(!string.IsNullOrEmpty(Model.User?.ProfileImage) ? Model.User.ProfileImage : "/img/anonymous-profile.png")" 
+                    alt="user photo">
+            </button>
+            <div class="hidden my-4 text-base list-none bg-neutral-800 divide-y divide-neutral-700 rounded-lg shadow-sm overflow-hidden animate__animated animate__fadeIn animate__faster" id="user-dropdown">
+                @if (Model.User != null && !string.IsNullOrEmpty(Model.User?.Name))
+                {
+                <a asp-controller="User" asp-action="Profile" asp-route-id="@Model.User.Id">
+                    <div class="px-3 py-2 flex gap-2 items-center border-b-1 border-neutral-700 hover:bg-neutral-700">
+                        <img class="size-10 rounded-lg" src="@Model.User.ProfileImage" alt="user photo">
+                        <div class="max-w-40">
+                            <span class="block text-white">@Model.User.Name @Model.User.Lastname</span>
+                            <span class="block text-sm truncate text-neutral-400">@Model.User.Email</span>
+                        </div>
+                    </div>
+                </a>
+                <ul class="py-2" aria-labelledby="user-menu-button">
+                    <li>
+                        <a asp-controller="Home" asp-action="Index" class="flex items-center gap-2 px-4 py-2 text-white hover:bg-neutral-700">
+                            <i data-lucide="home" class="size-5"></i>
+                            Home
+                        </a>
+                    </li>
+                    @if (Model.User != null && Model.User.Role == "Admin")
+                    {
+                        <li>
+                            <a asp-controller="Admin" asp-action="Dashboard" class="flex items-center gap-2 px-4 py-2 text-white hover:bg-neutral-700">
+                                <i data-lucide="chart-bar-big" class="size-5"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                    }
+                </ul>
+                <form asp-action="Logout" asp-controller="Auth" method="post" class="block text-white hover:bg-neutral-700">
+                    <button type="submit" class="flex items-center gap-2 w-full px-4 py-2 btn btn-danger cursor-pointer text-start">
+                        <i data-lucide="arrow-left-to-line" class="size-5"></i>
+                        Cerrar sesión
+                    </button>
+                    @Html.AntiForgeryToken()
+                </form>
+                }
+                else
+                {
+                    <ul class="py-2" aria-labelledby="user-menu-button">
+                        <li>
+                            <a asp-controller="Auth" asp-action="Login" class="flex items-center gap-2 px-4 py-2 text-neutral-700 hover:bg-neutral-100">
+                                <i data-lucide="user" class="size-5"></i>
+                                Iniciar sesión
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="Auth" asp-action="Register" class="flex items-center gap-2 px-4 py-2 text-neutral-700 hover:bg-neutral-100">
+                                <i data-lucide="arrow-right-to-line" class="size-5"></i>
+                                Regístrate
+                            </a>
+                        </li>
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+</nav>

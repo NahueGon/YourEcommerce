@@ -30,6 +30,9 @@ namespace YourEcommerceApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BrandImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
@@ -72,6 +75,31 @@ namespace YourEcommerceApi.Migrations
                     b.ToTable("Categories", (string)null);
                 });
 
+            modelBuilder.Entity("YourEcommerceApi.Models.Products.Gender", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("GenderImage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genders", (string)null);
+                });
+
             modelBuilder.Entity("YourEcommerceApi.Models.Products.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -95,7 +123,7 @@ namespace YourEcommerceApi.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<int>("Gender")
+                    b.Property<int?>("GenderId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -123,6 +151,8 @@ namespace YourEcommerceApi.Migrations
                     b.HasIndex("BrandId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("GenderId");
 
                     b.HasIndex("SportId");
 
@@ -238,6 +268,9 @@ namespace YourEcommerceApi.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("SportImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Sports", (string)null);
@@ -303,6 +336,9 @@ namespace YourEcommerceApi.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<string>("ProfileImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
@@ -328,6 +364,11 @@ namespace YourEcommerceApi.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("YourEcommerceApi.Models.Products.Gender", "Gender")
+                        .WithMany("Products")
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("YourEcommerceApi.Models.Products.Sport", "Sport")
                         .WithMany("Products")
                         .HasForeignKey("SportId")
@@ -336,6 +377,8 @@ namespace YourEcommerceApi.Migrations
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
+
+                    b.Navigation("Gender");
 
                     b.Navigation("Sport");
                 });
@@ -398,6 +441,11 @@ namespace YourEcommerceApi.Migrations
                 });
 
             modelBuilder.Entity("YourEcommerceApi.Models.Products.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("YourEcommerceApi.Models.Products.Gender", b =>
                 {
                     b.Navigation("Products");
                 });

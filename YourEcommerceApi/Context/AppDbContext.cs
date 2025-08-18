@@ -17,6 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<ProductColor> ProductColors{ get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Brand> Brands { get; set; }
+    public DbSet<Gender> Genders { get; set; }
     public DbSet<Sport> Sports { get; set; }
 
     // Tags y Attributes

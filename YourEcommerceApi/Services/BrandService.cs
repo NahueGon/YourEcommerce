@@ -11,11 +11,13 @@ public class BrandService : IBrandService
 {
     private readonly AppDbContext _context;
     private readonly IMapper  _mapper;
+    private readonly IWebHostEnvironment _env;
 
-    public BrandService(AppDbContext dbContext, IMapper mapper)
+    public BrandService(AppDbContext dbContext, IMapper mapper, IWebHostEnvironment env)
     {
         _context = dbContext;
         _mapper = mapper;
+        _env = env;
     }
 
     public async Task<IEnumerable<BrandResponseDto>> GetAll()
@@ -57,6 +59,27 @@ public class BrandService : IBrandService
             
         if (!string.IsNullOrWhiteSpace(brandDto.Description) && brandDto.Description != currentBrand.Description)
             currentBrand.Description = brandDto.Description;
+
+        if (brandDto.BrandImage != null && brandDto.BrandImage.Length > 0)
+        {
+            if (!string.IsNullOrEmpty(currentBrand.BrandImage))
+            {
+                var oldImagePath = Path.Combine(_env.WebRootPath!, currentBrand.BrandImage.Replace("/", Path.DirectorySeparatorChar.ToString()));
+                if (File.Exists(oldImagePath))
+                {
+                    File.Delete(oldImagePath);
+                }
+            }
+
+            currentBrand.BrandImage = await FileUploadHelper.SaveFileAsync(
+                _env,
+                brandDto.BrandImage,
+                $"img/brands/{currentBrand.Id}_brand",
+                $"{currentBrand.Id}_frontpage",
+                width: 1000,
+                height: 1000
+            );
+        }
 
         await _context.SaveChangesAsync();
 

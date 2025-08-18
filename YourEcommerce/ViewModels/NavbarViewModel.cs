@@ -1,8 +1,10 @@
+using YourEcommerce.DTOs.UserDtos;
+
 namespace YourEcommerce.ViewModels;
 
 public class NavbarViewModel
 {
     public UserViewModel? User { get; set; }
 
-    public List<Gender> Genders { get; set; } = new();
+    public List<GenderViewModel> Genders { get; set; } = new();
 }

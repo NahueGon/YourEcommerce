@@ -19,6 +19,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/auth/login";
+        options.AccessDeniedPath = "/auth/AccessDenied";
     });
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
@@ -40,6 +41,10 @@ void ConfigureHttpClient(IServiceProvider serviceProvider, HttpClient client)
 builder.Services.AddHttpClient<IUserService, UserService>(ConfigureHttpClient);
 builder.Services.AddHttpClient<IAuthService, AuthService>(ConfigureHttpClient);
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IGenderService, GenderService>();
+builder.Services.AddScoped<ISportService, SportService>();
 
 var app = builder.Build();
 

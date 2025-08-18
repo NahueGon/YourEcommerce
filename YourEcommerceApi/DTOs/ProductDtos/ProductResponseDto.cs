@@ -3,8 +3,8 @@ using YourEcommerceApi.DTOs.BrandDtos;
 using YourEcommerceApi.DTOs.CategoryDtos;
 using YourEcommerceApi.DTOs.ProductTagDtos;
 using YourEcommerceApi.DTOs.SportDtos;
-using YourEcommerceApi.Models.Products;
 using YourEcommerceApi.DTOs.ProductVariantDtos;
+using YourEcommerceApi.DTOs.GenderDtos;
 
 namespace YourEcommerceApi.DTOs.ProductDtos;
 
@@ -17,7 +17,7 @@ public class ProductResponseDto
     public int TotalStock { get; set; }
     public bool IsActive { get; set; } = true;
     
-    public Gender Gender { get; set; } = Gender.Unisex;
+    public GenderDto? Gender { get; set; }
     public BrandDto? Brand { get; set; }
     public SportDto? Sport { get; set; }
     public CategoryDto? Category { get; set; }

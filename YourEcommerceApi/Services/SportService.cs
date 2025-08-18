@@ -11,11 +11,13 @@ public class SportService : ISportService
 {
     private readonly AppDbContext _context;
     private readonly IMapper  _mapper;
+    private readonly IWebHostEnvironment _env;
 
-    public SportService(AppDbContext dbConext, IMapper mapper)
+    public SportService(AppDbContext dbConext, IMapper mapper, IWebHostEnvironment env)
     {
         _context = dbConext;
         _mapper = mapper;
+        _env = env;
     }
 
     public async Task<IEnumerable<SportResponseDto>> GetAll()
@@ -57,6 +59,27 @@ public class SportService : ISportService
 
         if (!string.IsNullOrWhiteSpace(sportDto.Description) && sportDto.Description != currentSport.Name)
             currentSport.Description = sportDto.Description;
+
+        if (sportDto.SportImage != null && sportDto.SportImage.Length > 0)
+        {
+            if (!string.IsNullOrEmpty(currentSport.SportImage))
+            {
+                var oldImagePath = Path.Combine(_env.WebRootPath!, currentSport.SportImage.Replace("/", Path.DirectorySeparatorChar.ToString()));
+                if (File.Exists(oldImagePath))
+                {
+                    File.Delete(oldImagePath);
+                }
+            }
+
+            currentSport.SportImage = await FileUploadHelper.SaveFileAsync(
+                _env,
+                sportDto.SportImage,
+                $"img/sports/{currentSport.Id}_sport",
+                $"{currentSport.Id}_frontpage",
+                width: 1920,
+                height: 1080
+            );
+        }
 
         await _context.SaveChangesAsync();
 

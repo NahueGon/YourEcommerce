@@ -1,29 +1,257 @@
 ﻿@{
     ViewData["Title"] = "Home";
+
+    var shoes = new[]
+    {
+        new { name = "Zapatilla Test 1", price = 110.00, image = "/img/shoes_nike/1_shoe_nike.webp", description = "Zapatilla cómoda y liviana para el día a día." },
+        new { name = "Zapatilla Test 2", price = 120.00, image = "/img/shoes_nike/2_shoe_nike.webp", description = "Diseño moderno con excelente tracción." },
+        new { name = "Zapatilla Test 3", price = 130.00, image = "/img/shoes_nike/3_shoe_nike.webp", description = "Ideal para caminatas largas y entrenamientos." },
+        new { name = "Zapatilla Test 4", price = 115.00, image = "/img/shoes_nike/4_shoe_nike.webp", description = "Estilo urbano con materiales resistentes." },
+        new { name = "Zapatilla Test 5", price = 140.00, image = "/img/shoes_nike/5_shoe_nike.webp", description = "Zapatilla casual con detalles minimalistas." },
+        new { name = "Zapatilla Test 6", price = 150.00, image = "/img/shoes_nike/6_shoe_nike.webp", description = "Con tecnología de amortiguación para mayor confort." },
+        new { name = "Zapatilla Test 7", price = 125.00, image = "/img/shoes_nike/7_shoe_nike.webp", description = "Versátil para uso deportivo o diario." },
+        new { name = "Zapatilla Test 8", price = 135.00, image = "/img/shoes_nike/8_shoe_nike.webp", description = "Material transpirable que mantiene el pie fresco." },
+        new { name = "Zapatilla Test 9", price = 160.00, image = "/img/shoes_nike/9_shoe_nike.webp", description = "Alta durabilidad para rutinas exigentes." },
+        new { name = "Zapatilla Test 10", price = 145.00, image = "/img/shoes_nike/10_shoe_nike.webp", description = "Diseño elegante y adaptable a cualquier look." }
+    };
+
+    var tshirts = new[]
+    {
+        new { name = "Remera Test 1", price = 110.00, image = "/img/tshirts_nike/1_tshirt_nike.webp", description = "Zapatilla cómoda y liviana para el día a día." },
+        new { name = "Remera Test 2", price = 120.00, image = "/img/tshirts_nike/2_tshirt_nike.webp", description = "Diseño moderno con excelente tracción." },
+        new { name = "Remera Test 3", price = 130.00, image = "/img/tshirts_nike/3_tshirt_nike.webp", description = "Ideal para caminatas largas y entrenamientos." },
+        new { name = "Remera Test 4", price = 115.00, image = "/img/tshirts_nike/4_tshirt_nike.webp", description = "Estilo urbano con materiales resistentes." },
+        new { name = "Remera Test 5", price = 140.00, image = "/img/tshirts_nike/5_tshirt_nike.webp", description = "Zapatilla casual con detalles minimalistas." },
+        new { name = "Remera Test 6", price = 150.00, image = "/img/tshirts_nike/6_tshirt_nike.webp", description = "Con tecnología de amortiguación para mayor confort." },
+        new { name = "Remera Test 7", price = 125.00, image = "/img/tshirts_nike/7_tshirt_nike.webp", description = "Versátil para uso deportivo o diario." },
+        new { name = "Remera Test 8", price = 135.00, image = "/img/tshirts_nike/8_tshirt_nike.webp", description = "Material transpirable que mantiene el pie fresco." },
+        new { name = "Remera Test 9", price = 160.00, image = "/img/tshirts_nike/9_tshirt_nike.webp", description = "Alta durabilidad para rutinas exigentes." },
+        new { name = "Remera Test 10", price = 145.00, image = "/img/tshirts_nike/10_tshirt_nike.webp", description = "Diseño elegante y adaptable a cualquier look." }
+    };
+
+    var genders = new[]
+    {
+        new { name = "Hombres", image = "/img/gender/men/men-frontpage.webp", description = "" },
+        new { name = "Mujeres", image = "/img/gender/women/women-frontpage.webp", description = "" },
+        new { name = "Niños", image = "/img/gender/kids/kids-frontpage.webp", description = "" },
+    };
+
+    var sports = new[]
+    {
+        new { name = "Basquet", image = "/img/sport_images/basquet-frontpage.webp", description = "" },
+        new { name = "Futbol", image = "/img/sport_images/futbol-frontpage.webp", description = "" },
+        new { name = "Fitness", image = "/img/sport_images/fitness-frontpage.webp", description = "" },
+        new { name = "Paddle", image = "/img/sport_images/paddle-frontpage.webp", description = "" },
+        new { name = "Running", image = "/img/sport_images/running-frontpage.webp", description = "" },
+        new { name = "Rugby", image = "/img/sport_images/rugby-frontpage.webp", description = "" },
+        new { name = "Voley", image = "/img/sport_images/voley-frontpage.webp", description = "" },
+        new { name = "Tenis", image = "/img/sport_images/tenis-frontpage.webp", description = "" },
+    };
 }
-<div class="grid grid-cols-5 p-2 gap-2">
-    <div id="custom-controls-gallery" class="w-full col-span-3" data-carousel="slide">
-        <div class="w-full relative h-56 overflow-hidden rounded-lg md:h-96">
-            <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                <img src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
+
+<style>
+    .swiper-button-next::after,
+    .swiper-button-prev::after {
+        display: none !important;
+        content: none !important;
+    }
+</style>
+
+<section class="w-full max-w-full mx-auto">
+    <div class="w-full bg-neutral-100 h-15 py-2">
+        <div id="default-carousel" class="relative w-full h-full max-w-2xl mx-auto z-10" data-carousel="slide">
+            <!-- Carousel wrapper -->
+            <div class="relative h-full overflow-hidden rounded-lg text-black text-center">
+                <!-- Item 1 -->
+                <div class="hidden text-sm md:text-base duration-700 ease-in-out bg-neutral-100 font-medium px-2" data-carousel-item="active">
+                    <p>¡Aprovechá las 6 Cuotas sin interés con todos los bancos!</p>
+                    <a href="" class="underline">Ver más promociones bancarias</a>
+                </div>
+                <!-- Item 2 -->
+                <div class="hidden text-sm md:text-base duration-700 ease-in-out bg-neutral-100 font-medium px-2" data-carousel-item>
+                    <p>Envío gratis a partir de $229.999</p>
+                    <a href="" class="underline">Ver términos y condiciones</a>
+                </div>
+                <!-- Item 3 -->
+                <div class="hidden text-sm md:text-base duration-700 ease-in-out bg-neutral-100 font-medium px-2" data-carousel-item>
+                    <p>Pedí hoy, ¡Te llega mañana!</p>
+                    <p>Exclusivo CABA y GBA</p>
+                </div>
             </div>
-            <div class="hidden duration-700 ease-in-out" data-carousel-item="active">
-                <img src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
-            </div>
-            <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                <img src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
-            </div>
-            <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                <img src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
-            </div>
-            <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                <img src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" class="absolute block max-w-full h-auto -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="">
-            </div>
+            <!-- Slider controls -->
+            <button type="button"
+                class="absolute top-0 start-0 z-30 flex items-center justify-center h-full cursor-pointer group focus:outline-none"
+                data-carousel-prev>
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full">
+                    <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 1 1 5l4 4" />
+                    </svg>
+                    <span class="sr-only">Previous</span>
+                </span>
+            </button>
+            <button type="button"
+                class="absolute top-0 end-0 z-30 flex items-center justify-center h-full cursor-pointer group focus:outline-none"
+                data-carousel-next>
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full">
+                    <svg class="w-4 h-4 text-black dark:text-gray-800 rtl:rotate-180" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 9 4-4-4-4" />
+                    </svg>
+                    <span class="sr-only">Next</span>
+                </span>
+            </button>
         </div>
     </div>
-    <div class="w-full col-span-2">
-        <div class="w-full h-45">
-            <img src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" class="w-full h-full object-cover object-center rounded-lg" alt="">
+</section>
+
+<a href="">
+    <img class="brightness-110 w-full hidden md:block" src="~/img/banners/pattern-frontpage.webp" alt="">
+    <img class="brightness-110 w-full md:hidden" src="~/img/banners/pattern-frontpage-2.webp" alt="">
+</a>
+
+<div class="w-full h-120 md:h-150 lg:h-190 relative bg-[url(/img/frontpage/frontpage.webp)] bg-cover bg-[90%_35%] brightness-120 overflow-hidden">
+    <div class="absolute top-0 left-0 md:left-0 w-100 md:w-150 lg:w-250 h-full bg-gradient-to-r from-white to-transparent">
+        <div class="flex flex-col gap-2 absolute bottom-20 md:bottom-25 lg:bottom-30 left-0 text-5xl md:text-7xl lg:text-8xl uppercase font-black p-4">
+            <p class="mb-2 md:mb-5">elevated</p>
+            <p class="">shoes</p>
+            <p class="">clothes</p>
+            <p class="text-end">accessories</p>
         </div>
+    </div>
+    <img src="~/img/icon.png" class="absolute bottom-5 right-5 size-8 block" alt="">
+</div>
+
+
+<div class="overflow-x-hidden py-10">
+    <p class="text-2xl pl-4 mb-4 font-medium">Destacados</p>
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            @foreach(var shoe in shoes)
+            {
+                <a href="" class="swiper-slide border border-transparent hover:border-black transition-all duration-300 ease-in-out">
+                    <img src="@shoe.image" alt="@shoe.name" class="w-full object-cover" />
+                    <div class="p-2 bg-white">
+                        <h3 class="text-lg">@shoe.name</h3>
+                        <p class="text-sm text-gray-600">@shoe.description</p>
+                        <p class="font-semibold">$@shoe.price</p>
+                    </div>
+                </a>
+            }
+        </div>
+        <button type="button" class="swiper-button-prev">
+            <span class="items-center justify-center p-4 w-10 h-10 rounded-full bg-black/30 hover:bg-black/90 transition-all duration-300 ease-in-out hidden md:inline-flex">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                </svg>
+                <span class="sr-only">Previous</span>
+            </span>
+        </button>
+        <button type="button" class="swiper-button-next ">
+            <span class="items-center justify-center p-4 w-10 h-10 rounded-full bg-black/30 hover:bg-black/90 transition-all duration-300 ease-in-out hidden md:inline-flex">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                <span class="sr-only">Next</span>
+            </span>
+        </button>
     </div>
 </div>
+
+<section class="w-full py-10">
+    <h3 class="uppercase text-4xl mb-4 text-center font-black">equípate para tu deporte favorito</h3>
+    <div class="w-full grid grid-cols-1 md:grid-cols-2">
+        @foreach(var sport in sports)
+        {
+            <div class="w-full h-80 relative overflow-hidden">
+                <a href="">
+                    <img class="w-full h-full object-cover transition-transform hover:scale-110 bg-cover"
+                        src="@sport.image" alt="">
+                    <p class="absolute bottom-4 right-4 md:text-2xl lg:text-4xl uppercase font-extrabold bg-white p-2">@sport.name</p>
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+<div class="overflow-x-hidden py-10">
+    <p class="text-2xl pl-4 mb-4 font-medium">Destacados</p>
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            @foreach(var tshirt in tshirts)
+            {
+                <a href="" class="h-90 swiper-slide border border-transparent hover:border-black transition-all duration-300 ease-in-out">
+                    <div>
+                        <img src="@tshirt.image" alt="@tshirt.name" class="w-full object-cover" />
+                        <div class="p-2 bg-white">
+                            <h3 class="mt-2 text-lg">@tshirt.name</h3>
+                            <p class="text-sm text-gray-600">@tshirt.description</p>
+                            <p class="font-semibold">$@tshirt.price</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+        <button type="button" class="swiper-button-prev">
+            <span class="items-center justify-center p-4 w-10 h-10 rounded-full bg-black/30 hover:bg-black/90 transition-all duration-300 ease-in-out hidden md:inline-flex">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 1 1 5l4 4"/>
+                </svg>
+                <span class="sr-only">Previous</span>
+            </span>
+        </button>
+        <button type="button" class="swiper-button-next ">
+            <span class="items-center justify-center p-4 w-10 h-10 rounded-full bg-black/30 hover:bg-black/90 transition-all duration-300 ease-in-out hidden md:inline-flex">
+                <svg class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                </svg>
+                <span class="sr-only">Next</span>
+            </span>
+        </button>
+    </div>
+</div>
+
+<section class="w-full py-10">
+    <h3 class="uppercase text-4xl mb-4 text-center font-black">equípa a tu familia</h3>
+    <div class="w-full grid grid-cols-2 md:grid-cols-3 lg:gap-4">
+        @foreach(var gender in genders)
+        {
+            <div class="w-full h-80 md:h-200 relative overflow-hidden">
+                <a href="">
+                    <img class="w-full h-full object-cover transition-transform hover:scale-110 bg-cover" src="@gender.image" alt="">
+                    <p class="absolute bottom-4 right-4 md:text-2xl lg:text-4xl uppercase font-extrabold bg-white p-2">@gender.name</p>
+                </a>
+            </div>
+        }
+        <div class="w-full h-80 relative overflow-hidden md:hidden flex flex-col justify-center items-center p-2">
+            <h3 class="text-4xl text-center uppercase font-black mb-4">Te mereces algo lindo</h3>
+            <a href="" class="text-xl text-center items-center uppercase font-extrabold text-white bg-black p-2 rounded-full">Comprar</a>
+        </div>
+    </div>
+</section>
+
+<img class="w-full brightness-110 pt-10" src="~/img/banners/pattern.webp" alt="">
+
+@section Scripts {
+    <script>
+        const swiper = new Swiper(".mySwiper", {
+            loop: true,
+            spaceBetween: 8,
+            slidesPerView: 2,
+
+            breakpoints: {
+                640: { slidesPerView: 2 },
+                768: { slidesPerView: 3 },
+                1024: { slidesPerView: 4 },
+                1280: { slidesPerView: 5 },
+            },
+
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+        });
+    </script>
+}

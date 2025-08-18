@@ -1,42 +1,26 @@
 @using YourEcommerce.ViewModels
 @model YourEcommerce.ViewModels.MegaMenuViewModel
 
-@functions {
-    public string GetGenderName(Gender gender)
-    {
-        return gender switch
-        {
-            Gender.Unisex => "Unisex",
-            Gender.Male => "Hombres",
-            Gender.Female => "Mujeres",
-            Gender.Kids => "Niños",
-            _ => "Desconocido"
-        };
-    }
-}
-
-@foreach (var genderGroup in Model.MenuStructure.OrderBy(g => g.Key))
+@foreach (var genderGroup in Model.MenuStructure.OrderBy(g => g.Key.Id))
 {
     var gender = genderGroup.Key;
     var categories = genderGroup.Value;
     
-    <div id="mega-menu-full-cta-dropdown-@((int)gender)" class="z-100 absolute w-full hidden bg-white shadow-xs dark:bg-gray-900 animate__animated animate__fadeIn animate__faster">
+    <div id="mega-menu-full-cta-dropdown-@gender.Id" class="z-100 absolute w-full hidden bg-white shadow-xs dark:bg-gray-900 animate__animated animate__fadeIn animate__faster p-8">
         <div class="flex justify-center gap-15 max-w-screen-xl px-4 pb-5 mx-auto text-sm text-gray-500 dark:text-gray-400">
             @foreach (var category in categories)
             {
-                var categoryName = category.Key;
-                var tags = category.Value;
 
-                <ul class="space-y-4 w-30" aria-labelledby="mega-menu-full-cta-button">
-                    <button class="cursor-pointer mb-4 py-2 px-3 text-base font-medium text-gray-900 border-b border-gray-100 md:w-auto hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:p-0 dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent dark:border-gray-700 tracking-wide">
-                        @categoryName
+                <ul class="space-y-4 w-50" aria-labelledby="mega-menu-full-cta-button">
+                    <button class="cursor-pointer w-full text-start mb-4 py-2 pr-2 text-base font-medium text-gray-900 border-b-2 border-black-100 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent dark:border-gray-700 tracking-wide">
+                        @category.Key
                     </button>
 
-                    @foreach (var tagName in tags)
+                    @foreach (var tag in category.Value)
                     {
                         <li>
-                            <a href="#" class="font-medium hover:text-black dark:hover:text-white">
-                                @tagName
+                            <a href="#" class="font-medium hover:text-black dark:hover:text-white pl-2">
+                                @tag
                             </a>
                         </li>
                     }
@@ -48,7 +32,7 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const genders = [@string.Join(", ", Model.MenuStructure.Keys.Select(g => (int)g))];
+        const genders = [@string.Join(", ", Model.MenuStructure.Keys.Select(g => g.Id))];
 
         genders.forEach(genderId => {
             const button = document.getElementById(`mega-menu-full-cta-dropdown-button-${genderId}`);

@@ -1,11 +1,11 @@
 using System.Diagnostics;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using YourEcommerce.Models;
 using YourEcommerce.Services.Interfaces;
 using YourEcommerce.ViewModels;
+using YourEcommerce.Helpers;
 
 namespace YourEcommerce.Controllers;
 
@@ -52,24 +52,14 @@ public class AuthController : Controller
             return View(loginModel);
         }
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, $"{user.Name} {user.Lastname ?? ""}"),
-            new Claim(ClaimTypes.Email, user.Email ?? ""),
-            new Claim(ClaimTypes.Role, user.Role ?? "Customer")
-        };
-
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+        await AuthHelper.RefreshUserClaims(HttpContext, user);
 
         ViewBag.ShowSuccess = true;
         ViewBag.UserData = user;
 
         return View(loginModel);
     }
+
 
     [HttpGet("register")]
     public IActionResult Register()
@@ -103,6 +93,13 @@ public class AuthController : Controller
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         HttpContext.Session.Clear();
         return RedirectToAction("Login", "Auth");
+    }
+
+    [HttpGet("AccessDenied")]
+    public IActionResult AccessDenied()
+    {
+        TempData["ErrorMessage"] = "No tienes permisos para acceder a esa página.";
+        return RedirectToAction("Index", "Home");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

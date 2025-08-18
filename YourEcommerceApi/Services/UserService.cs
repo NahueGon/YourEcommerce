@@ -11,12 +11,14 @@ namespace YourEcommerceApi.Services;
 public class UserService : IUserService
 {
     private readonly AppDbContext _context;
-    private readonly IMapper  _mapper;
+    private readonly IWebHostEnvironment _env;
+    private readonly IMapper _mapper;
     private readonly IPasswordHasher<User> _passwordHasher;
 
-    public UserService(AppDbContext appDbContext, IMapper  mapper, IPasswordHasher<User> hasher)
+    public UserService(AppDbContext appDbContext, IWebHostEnvironment env, IMapper mapper, IPasswordHasher<User> hasher)
     {
         _context = appDbContext;
+        _env = env;
         _mapper = mapper;
         _passwordHasher = hasher;
     }
@@ -66,23 +68,51 @@ public class UserService : IUserService
         var currentUser = await _context.Users.FindAsync(id);
         if (currentUser == null) return null;
 
-        if (!string.IsNullOrWhiteSpace(userDto.Name))
+        if (!string.IsNullOrWhiteSpace(userDto.Name) && userDto.Name != currentUser.Name)
             currentUser.Name = userDto.Name;
 
-        if (!string.IsNullOrWhiteSpace(userDto.Lastname))
+        if (!string.IsNullOrWhiteSpace(userDto.Lastname) && userDto.Lastname != currentUser.Lastname)
             currentUser.Lastname = userDto.Lastname;
 
-        if (!string.IsNullOrWhiteSpace(userDto.Email))
+        if (!string.IsNullOrWhiteSpace(userDto.Email) && userDto.Email != currentUser.Email)
             currentUser.Email = userDto.Email;
 
-        if (!string.IsNullOrWhiteSpace(userDto.Password))
-            currentUser.Password = _passwordHasher.HashPassword(currentUser, userDto.Password);
-
-        if (!string.IsNullOrWhiteSpace(userDto.PhoneNumber))
+        if (!string.IsNullOrWhiteSpace(userDto.PhoneNumber) && userDto.PhoneNumber != currentUser.PhoneNumber)
             currentUser.PhoneNumber = userDto.PhoneNumber;
 
-        if (!string.IsNullOrWhiteSpace(userDto.Address))
+        if (!string.IsNullOrWhiteSpace(userDto.Address) && userDto.Address != currentUser.Address)
             currentUser.Address = userDto.Address;
+
+        if (!string.IsNullOrWhiteSpace(userDto.CurrentPassword) && !string.IsNullOrWhiteSpace(userDto.NewPassword))
+        {
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(currentUser, currentUser.Password!, userDto.CurrentPassword);
+            
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
+                return null; 
+
+            currentUser.Password = _passwordHasher.HashPassword(currentUser, userDto.NewPassword);
+        }
+
+        if (userDto.ProfileImage != null && userDto.ProfileImage.Length > 0)
+        {
+            if (!string.IsNullOrEmpty(currentUser.ProfileImage))
+            {
+                var oldImagePath = Path.Combine(_env.WebRootPath!, currentUser.ProfileImage.Replace("/", Path.DirectorySeparatorChar.ToString()));
+                if (File.Exists(oldImagePath))
+                {
+                    File.Delete(oldImagePath);
+                }
+            }
+
+            currentUser.ProfileImage = await FileUploadHelper.SaveFileAsync(
+                _env,
+                userDto.ProfileImage,
+                $"img/users/{currentUser.Id}_user",
+                $"{currentUser.Id}_profile",
+                width: 600,
+                height: 600
+            );
+        }
 
         await _context.SaveChangesAsync();
 

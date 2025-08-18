@@ -23,6 +23,7 @@ builder.Services.AddAutoMapper(
     typeof(ProductProfile),
     typeof(TagProfile),
     typeof(BrandProfile),
+    typeof(GenderProfile),
     typeof(CategoryProfile),
     typeof(SportProfile)
 );
@@ -34,12 +35,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
+builder.Services.AddScoped<IGenderService, GenderService>();
 builder.Services.AddScoped<ISportService, SportService>();
 builder.Services.AddScoped<ITagService, TagService>();
-// builder.Services.AddScoped<IProductVariantService, ProductVariantService>();
-// builder.Services.AddScoped<IProductColorService, ProductColorService>();
-// builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
-// builder.Services.AddScoped<IProductTagService, ProductTagService>();
 
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
@@ -81,6 +79,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

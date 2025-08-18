@@ -1,9 +1,11 @@
 namespace YourEcommerceApi.Models.Products;
 
-public enum Gender
+public class Gender
 {
-    Unisex = 0,
-    Male = 1,
-    Female = 2,
-    Kids = 3
+    public int Id { get; set; }
+    public required string Name { get; set; }
+    public string? Description { get; set; }
+    public string? GenderImage { get; set; } = string.Empty;
+
+    public ICollection<Product>? Products { get; set; } = new List<Product>();
 }

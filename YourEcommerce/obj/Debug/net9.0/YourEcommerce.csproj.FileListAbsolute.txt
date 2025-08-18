@@ -51,9 +51,9 @@ C:\projects\dotnet\YourEcommerce\YourEcommerce\bin\Debug\net9.0\package-lock.jso
 C:\projects\dotnet\YourEcommerce\YourEcommerce\bin\Debug\net9.0\package.json
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\554hmdndrm-wpocf3thxn.gz
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\8kmcrkf3s8-pr6oihrlfn.gz
-C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\pxm2hjo2q7-95dfl5wff0.gz
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\ailflpxts2-ffccjo36hl.gz
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\0uey5g2xqc-ffccjo36hl.gz
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\1dycqk8llq-lgtwmgsrzm.gz
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\b2w6z47wc6-qnoz41wkdk.gz
-C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\ppk931a01q-ifmotxghvh.gz
+C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\pxm2hjo2q7-qm3gw6zny7.gz
+C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\ppk931a01q-012hl7egfi.gz

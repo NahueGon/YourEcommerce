@@ -1,5 +1,6 @@
 using YourEcommerceApi.DTOs.BrandDtos;
 using YourEcommerceApi.DTOs.CategoryDtos;
+using YourEcommerceApi.DTOs.GenderDtos;
 using YourEcommerceApi.DTOs.ProductAttributeDtos;
 using YourEcommerceApi.DTOs.ProductColorDtos;
 using YourEcommerceApi.DTOs.ProductDtos;
@@ -22,7 +23,6 @@ public static class ProductExtensions
             Description = product.Description,
             Price = product.Price,
             TotalStock = product.TotalStock,
-            Gender = product.Gender,
             Category = product.Category == null
                 ? null
                 : new CategoryDto
@@ -36,6 +36,13 @@ public static class ProductExtensions
                 {
                     Id = product.Brand.Id,
                     Name = product.Brand.Name
+                },
+            Gender = product.Gender == null
+                ? null
+                : new GenderDto
+                {
+                    Id = product.Gender.Id,
+                    Name = product.Gender.Name
                 },
             Sport = product.Sport == null
                 ? null

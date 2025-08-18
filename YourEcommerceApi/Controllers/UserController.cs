@@ -53,7 +53,8 @@ namespace YourEcommerceApi.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserUpdateDto userDto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> UpdateUser(int id, [FromForm] UserUpdateDto userDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

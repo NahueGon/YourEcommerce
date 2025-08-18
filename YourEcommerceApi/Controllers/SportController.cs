@@ -44,7 +44,8 @@ namespace YourEcommerceApi.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<SportResponseDto>> UpdateSport(int id, SportUpdateDto sportDto)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<SportResponseDto>> UpdateSport(int id, [FromForm] SportUpdateDto sportDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

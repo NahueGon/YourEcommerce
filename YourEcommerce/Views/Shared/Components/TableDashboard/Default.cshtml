@@ -1,0 +1,80 @@
+﻿@model YourEcommerce.ViewModels.TableDashboardViewModel<dynamic>
+@using System.ComponentModel.DataAnnotations
+@using YourEcommerce.ViewModels
+
+@{
+    var properties = Model.GetOrderedProperties();
+}
+
+<div class="relative shadow-md w-full">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4">
+        <h3 class="text-2xl font-semibold">@Model.Title</h3>
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative w-full sm:w-80">
+            <div class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
+                <i data-lucide="search" class="size-5"></i>
+            </div>
+            <input type="text" id="table-search"
+                class="w-full block p-2 ps-10 text-sm border rounded-lg bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Buscar por @Model.Title">
+        </div>
+    </div>
+    <div class="relative overflow-x-auto rounded-lg">
+        <p class="font-medium mb-2">Total @Model.TotalItems</p>
+        @if (Model.Items != null && Model.Items.Any())
+        {
+            <table class="w-full text-sm text-left text-neutral-400">
+                <thead class="text-xs uppercase bg-neutral-700 text-neutral-400">
+                    <tr>
+                        @foreach (var prop in properties)
+                        {
+                            var displayAttr = prop.GetCustomAttributes(typeof(DisplayAttribute), true)
+                                                    .FirstOrDefault() as DisplayAttribute;
+                            var headerName = displayAttr?.Name ?? prop.Name;
+                            <th scope="col" class="px-4 py-2">
+                                @headerName
+                            </th>
+                        }
+                        <th scope="col" class="p-4">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr class="border-b bg-neutral-800 border-neutral-700 hover:bg-neutral-600">
+
+                            @foreach (var prop in properties)
+                            {
+                                <th scope="row" class="px-4 py-2 text-xs font-medium text-white">
+                                    @if (prop.Name.EndsWith("Image"))
+                                    {
+                                        var imgPath = prop.GetValue(item)?.ToString() ?? "/img/anonymous-profile.png";
+
+                                        <img src="@imgPath" 
+                                            alt="Profile Image" 
+                                            class="w-full min-w-16 max-w-22 rounded-lg" />
+                                    }
+                                    else
+                                    {
+                                        @prop.GetValue(item)
+                                    }
+                                </th>
+                            }
+                            <td class="w-4 px-3 py-2 space-y-2">
+                                <button type="button" class="w-full border focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 focus:ring-blue-800 cursor-pointer">Editar</button>
+                                <form asp-controller="Dashboard" asp-action="DeleteUser" asp-route-id="@item.Id" method="post" class="inline">
+                                    <button type="submit" class="w-full border focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center border-red-500 text-red-500 hover:text-white hover:bg-red-600 focus:ring-red-900 cursor-pointer">Borrar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No hay datos para mostrar.</p>
+        }
+    </div>
+</div>

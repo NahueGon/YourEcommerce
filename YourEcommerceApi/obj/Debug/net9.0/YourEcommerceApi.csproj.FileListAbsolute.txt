@@ -338,3 +338,7 @@ C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidat
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\FluentValidation.DependencyInjectionExtensions.dll
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\AutoMapper.dll
 C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\YourEcommerceApi.staticwebassets.runtime.json
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\Microsoft.IO.RecyclableMemoryStream.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\SixLabors.ImageSharp.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerceApi\bin\Debug\net9.0\SixLabors.ImageSharp.Web.dll

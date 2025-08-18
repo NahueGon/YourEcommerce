@@ -1,0 +1,19 @@
+﻿@model dynamic
+@{
+    var controller = Model.Controller as string;
+    var action = Model.Action as string;
+    var icon = Model.Icon as string;
+    var text = Model.Text as string;
+
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var activeClass = (currentController == controller && currentAction == action)
+                      ? "bg-white text-black"
+                      : "text-white hover:text-black hover:bg-white transition-colors duration-200";
+}
+
+<a asp-controller="@controller" asp-action="@action" class="w-full flex items-center p-2 gap-2 rounded-lg @activeClass">
+    <i data-lucide="@icon" class="size-5 min-w-5"></i>
+    <span class="block text-2xl sm:text-lg">@text</span>
+</a>

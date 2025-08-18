@@ -27,6 +27,7 @@ public class ProductService : IProductService
         var products = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Brand)
+            .Include(p => p.Gender)
             .Include(p => p.Sport)
             .Include(p => p.ProductTags)
                 .ThenInclude(pt => pt.Tag)
@@ -43,6 +44,7 @@ public class ProductService : IProductService
         var product = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Brand)
+            .Include(p => p.Gender)
             .Include(p => p.Sport)
             .Include(p => p.ProductTags)
                 .ThenInclude(pt => pt.Tag)
@@ -60,6 +62,7 @@ public class ProductService : IProductService
         var product = _mapper.Map<Product>(productDto);
 
         Brand? brand = null;
+        Gender? gender = null;
         Sport? sport = null;
         Category? category = null;
 
@@ -73,6 +76,12 @@ public class ProductService : IProductService
         {
             brand = await _context.Brands.FindAsync(productDto.BrandId)
                 ?? throw new Exception("Marca no encontrada.");
+        }
+
+        if (productDto.GenderId is > 0)
+        {
+            gender = await _context.Genders.FindAsync(productDto.GenderId)
+                ?? throw new Exception("Genero no encontrado.");
         }
 
         if (productDto.SportId is > 0)
@@ -145,6 +154,7 @@ public class ProductService : IProductService
         var updated = await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Brand)
+            .Include(p => p.Gender)
             .Include(p => p.Sport)
             .Include(p => p.ProductVariants).ThenInclude(pv => pv.Colors)
             .Include(p => p.ProductAttributes)
@@ -162,6 +172,9 @@ public class ProductService : IProductService
         if (dto.BrandId.HasValue && !await _context.Brands.AnyAsync(b => b.Id == dto.BrandId))
             throw new Exception("Marca no encontrada.");
 
+        if (dto.GenderId.HasValue && !await _context.Genders.AnyAsync(g => g.Id == dto.GenderId))
+            throw new Exception("Genero no encontrada.");
+
         if (dto.SportId.HasValue && !await _context.Sports.AnyAsync(s => s.Id == dto.SportId))
             throw new Exception("Deporte no encontrado.");
     }
@@ -171,7 +184,7 @@ public class ProductService : IProductService
         product.Name = dto.Name ?? product.Name;
         product.Description = dto.Description ?? product.Description;
         product.Price = dto.Price != 0 ? dto.Price : product.Price;
-        product.Gender = dto.Gender ?? product.Gender;
+        product.GenderId = dto.GenderId ?? product.GenderId;
         product.CategoryId = dto.CategoryId ?? product.CategoryId;
         product.BrandId = dto.BrandId ?? product.BrandId;
         product.SportId = dto.SportId ?? product.SportId;

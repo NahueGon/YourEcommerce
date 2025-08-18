@@ -24,9 +24,6 @@ public class ProductConfiguration  : IEntityTypeConfiguration<Product>
 
         builder.Ignore(p => p.TotalStock);
 
-        builder.Property(p => p.Gender)
-            .IsRequired();
-
         builder.Property(p => p.CreatedAt)
             .HasDefaultValueSql("GETDATE()");
 
@@ -37,6 +34,12 @@ public class ProductConfiguration  : IEntityTypeConfiguration<Product>
         builder.HasOne(p => p.Brand)
             .WithMany(b => b.Products)
             .HasForeignKey(p => p.BrandId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
+        
+        builder.HasOne(p => p.Gender)
+            .WithMany(b => b.Products)
+            .HasForeignKey(p => p.GenderId)
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired(false);
 
