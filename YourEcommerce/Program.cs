@@ -1,10 +1,17 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
 using YourEcommerce.Config;
+using YourEcommerce.Repositories;
+using YourEcommerce.Repositories.Interfaces;
 using YourEcommerce.Services;
 using YourEcommerce.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -24,27 +31,46 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
 
-builder.Services.AddHttpClient("YourEcommerceApi", client =>
-{
-    client.BaseAddress = new Uri("http://localhost:5076/");
-    client.DefaultRequestHeaders.Add("Accept", "application/json");
-});
-
 void ConfigureHttpClient(IServiceProvider serviceProvider, HttpClient client)
 {
     var apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
-    if (string.IsNullOrEmpty(apiSettings.BaseUrl)) throw new Exception("ApiSettings.BaseUrl no está configurado.");
-    
+    if (string.IsNullOrEmpty(apiSettings.BaseUrl))
+        throw new Exception("ApiSettings.BaseUrl no está configurado.");
+
     client.BaseAddress = new Uri(apiSettings.BaseUrl);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
 }
 
-builder.Services.AddHttpClient<IUserService, UserService>(ConfigureHttpClient);
+builder.Services.AddSingleton(new JsonSerializerOptions
+{
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    WriteIndented = true,
+    Converters = { new JsonStringEnumConverter() }
+});
+
+// Repositories
+builder.Services.AddHttpClient<ISportRepository, SportRepository>(ConfigureHttpClient);
+builder.Services.AddHttpClient<IBrandRepository, BrandRepository>(ConfigureHttpClient);
+builder.Services.AddHttpClient<IGenderRepository, GenderRepository>(ConfigureHttpClient);
+builder.Services.AddHttpClient<IUserRepository, UserRepository>(ConfigureHttpClient);
+builder.Services.AddHttpClient<IProductRepository, ProductRepository>(ConfigureHttpClient);
+builder.Services.AddHttpClient<ICategoryRepository, CategoryRepository>(ConfigureHttpClient);
+
 builder.Services.AddHttpClient<IAuthService, AuthService>(ConfigureHttpClient);
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// Services
+builder.Services.AddScoped<ISportService, SportService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IGenderService, GenderService>();
-builder.Services.AddScoped<ISportService, SportService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+});
 
 var app = builder.Build();
 

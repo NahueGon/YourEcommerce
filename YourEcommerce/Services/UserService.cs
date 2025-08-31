@@ -1,142 +1,75 @@
 using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
+using AutoMapper;
 using YourEcommerce.DTOs.UserDtos;
+using YourEcommerce.Repositories.Interfaces;
 using YourEcommerce.Services.Interfaces;
 
 namespace YourEcommerce.Services;
 
 public class UserService : IUserService
 {
-    private readonly HttpClient _httpClient;
-    private readonly string _apiBaseUrl = "http://192.168.100.11:5076/";
+    private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public UserService(HttpClient httpClient)
+    public UserService(IUserRepository repository, IMapper mapper)
     {
-        _httpClient = httpClient;
+        _userRepository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<IEnumerable<UserViewModel>> GetAll()
+    public async Task<UserResponseDto?> Get(int id)
     {
-        var response = await _httpClient.GetAsync("api/users");
-        if (!response.IsSuccessStatusCode) return Enumerable.Empty<UserViewModel>();
+        var user = await _userRepository.GetById(id);
+        if (user is null) return null;
 
-        var responseContent = await response.Content.ReadAsStringAsync();
-        var users = JsonSerializer.Deserialize<IEnumerable<UserViewModel>>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        }) ?? Enumerable.Empty<UserViewModel>();
-
-        foreach (var user in users)
-        {
-            if (!string.IsNullOrEmpty(user.ProfileImage))
-            {
-                user.ProfileImage = $"{_apiBaseUrl}{user.ProfileImage}";
-            }
-            else
-            {
-                user.ProfileImage = $"{_apiBaseUrl}/img/anonymous-profile.png";
-            }
-        }
-
-        return users;
+        return _mapper.Map<UserResponseDto>(user);
     }
 
-    public async Task<UserViewModel?> Get(int id)
+    public async Task<UserResponseDto?> GetByEmail(string email)
     {
-        var response = await _httpClient.GetAsync($"api/users/{id}");
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var user = JsonSerializer.Deserialize<UserViewModel>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        return user;
+        var user = await _userRepository.GetByEmail(email);
+        if (user == null) return null;
+        return _mapper.Map<UserResponseDto>(user);
     }
 
-    public async Task<UserViewModel?> GetCurrent(ClaimsPrincipal user)
+    public async Task<UserResponseDto?> GetCurrent(ClaimsPrincipal claimsPrincipal)
     {
-        if (user.Identity == null || !user.Identity.IsAuthenticated) return null;
+        var userEntity = await _userRepository.GetCurrent(claimsPrincipal);
+        if (userEntity == null) return null;
 
-        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (!int.TryParse(userIdClaim, out int userId)) return null;
-
-        return await Get(userId);
+        return _mapper.Map<UserResponseDto>(userEntity);
     }
 
-    public async Task<UserViewModel?> GetByEmail(string email)
+    public async Task<List<UserDto>> GetAllForTable()
     {
-        var response = await _httpClient.GetAsync($"api/users/email?email={email}");
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var user = JsonSerializer.Deserialize<UserViewModel>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        return user;
+        var users = await _userRepository.GetAll();
+        return users.Select(u => _mapper.Map<UserDto>(u)).ToList();
     }
 
-    public async Task<UserViewModel?> Update(int id, UserUpdateViewModel userDto)
+    public async Task<UserUpdateDto?> GetForEdit(int id)
     {
-        using var formData = new MultipartFormDataContent();
+        var user = await _userRepository.GetById(id);
+        if (user is null) return null;
 
-        if (!string.IsNullOrWhiteSpace(userDto.Name))
-            formData.Add(new StringContent(userDto.Name), "Name");
-
-        if (!string.IsNullOrWhiteSpace(userDto.Lastname))
-            formData.Add(new StringContent(userDto.Lastname), "Lastname");
-
-        if (!string.IsNullOrWhiteSpace(userDto.Email))
-            formData.Add(new StringContent(userDto.Email), "Email");
-
-        if (!string.IsNullOrWhiteSpace(userDto.PhoneNumber))
-            formData.Add(new StringContent(userDto.PhoneNumber), "PhoneNumber");
-
-        if (!string.IsNullOrWhiteSpace(userDto.Address))
-            formData.Add(new StringContent(userDto.Address), "Address");
-
-        if (!string.IsNullOrWhiteSpace(userDto.CurrentPassword))
-            formData.Add(new StringContent(userDto.CurrentPassword), "CurrentPassword");
-
-        if (!string.IsNullOrWhiteSpace(userDto.NewPassword))
-            formData.Add(new StringContent(userDto.NewPassword), "NewPassword");
-
-        if (userDto.ProfileImage != null)
-        {
-            var fileStream = userDto.ProfileImage.OpenReadStream();
-            formData.Add(new StreamContent(fileStream), "ProfileImage", userDto.ProfileImage.FileName);
-        }
-
-        var request = new HttpRequestMessage(new HttpMethod("PATCH"), $"api/users/{id}")
-        {
-            Content = formData
-        };
-
-        var response = await _httpClient.SendAsync(request);
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        return JsonSerializer.Deserialize<UserViewModel>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        return _mapper.Map<UserUpdateDto>(user);
     }
-    
-    public async Task<bool> Delete(int id)
-    {
-        var response = await _httpClient.DeleteAsync($"api/users/{id}");
 
-        return response.IsSuccessStatusCode;
+    public async Task<UserDto?> Create(UserCreateDto userDto)
+    {
+        var created = await _userRepository.Create(userDto);
+        if (created == null) return null;
+        return _mapper.Map<UserDto>(created);
+    }
+
+    public async Task<UserDto?> Update(int id, UserUpdateDto userDto)
+    {
+        var updated = await _userRepository.Update(id, userDto);
+        if (updated == null) return null;
+        return _mapper.Map<UserDto>(updated);
+    }
+
+    public Task<bool> Delete(int id)
+    {
+        return _userRepository.Delete(id);
     }
 }

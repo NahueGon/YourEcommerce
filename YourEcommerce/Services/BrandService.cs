@@ -1,73 +1,50 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using AutoMapper;
 using YourEcommerce.DTOs.BrandDtos;
+using YourEcommerce.Repositories.Interfaces;
 using YourEcommerce.Services.Interfaces;
 
 namespace YourEcommerce.Services;
 
 public class BrandService : IBrandService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IBrandRepository _brandRepository;
+    private readonly IMapper _mapper;
 
-    public BrandService(IHttpClientFactory httpClientFactory)
+    public BrandService(IBrandRepository repository, IMapper mapper)
     {
-        _httpClientFactory = httpClientFactory;
+        _brandRepository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<List<BrandDto>> GetAll()
+    public async Task<List<BrandDto>> GetAllForTable()
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync("api/brands");
-
-        if (!response.IsSuccessStatusCode) return new();
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-        };
-
-        var content = await response.Content.ReadAsStringAsync();
-        var brands = JsonSerializer.Deserialize<List<BrandDto>>(content, options);
-
-        return brands ?? new List<BrandDto>();
+        var brands = await _brandRepository.GetAll();
+        return brands.Select(s => _mapper.Map<BrandDto>(s)).ToList();
     }
 
-    public async Task<IEnumerable<BrandDto>> GetAllFlat()
+    public async Task<BrandUpdateDto?> GetForEdit(int id)
     {
-        var brands = await GetAll();
-
-        return brands.Select(b => new BrandDto
-        {
-            Id = b.Id,
-            Name = b.Name,
-            Description = b.Description,
-            BrandImage = b.BrandImage
-        });
+        var brand = await _brandRepository.GetById(id);
+        if (brand is null) return null;
+        return _mapper.Map<BrandUpdateDto>(brand);
     }
 
-    public async Task<BrandDto?> Get(int id)
+       public async Task<BrandDto?> Create(BrandCreateDto brandDto)
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync($"api/brands/{id}");
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var brand = JsonSerializer.Deserialize<BrandDto>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        return brand;
+        var created = await _brandRepository.Create(brandDto);
+        if (created == null) return null;
+        return _mapper.Map<BrandDto>(created);
     }
-    
-    public async Task<bool> Delete(int id)
-    {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.DeleteAsync($"api/brands/{id}");
 
-        return response.IsSuccessStatusCode;
+    public async Task<BrandDto?> Update(int id, BrandUpdateDto brandDto)
+    {
+        var updated = await _brandRepository.Update(id, brandDto);
+        if (updated == null) return null;
+        return _mapper.Map<BrandDto>(updated);
+    }
+
+    public Task<bool> Delete(int id)
+    {
+        return _brandRepository.Delete(id);
     }
 }

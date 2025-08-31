@@ -1,10 +1,11 @@
+using YourEcommerce.DTOs.GenderDtos;
 using YourEcommerce.DTOs.UserDtos;
 
 namespace YourEcommerce.ViewModels;
 
 public class NavbarViewModel
 {
-    public UserViewModel? User { get; set; }
+    public UserResponseDto? User { get; set; }
 
-    public List<GenderViewModel> Genders { get; set; } = new();
+    public List<GenderDto> Genders { get; set; } = new();
 }

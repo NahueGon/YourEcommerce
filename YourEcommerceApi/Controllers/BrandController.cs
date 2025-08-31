@@ -57,7 +57,7 @@ namespace YourEcommerceApi.Controllers
             return Ok(updatedBrand);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBrand(int id)
         {
             var brand = await _brandService.Get(id);

@@ -46,6 +46,20 @@ public class BrandService : IBrandService
         _context.Brands.Add(brand);
         await _context.SaveChangesAsync();
 
+        if (brandDto.BrandImage != null && brandDto.BrandImage.Length > 0)
+        {
+            brand.BrandImage = await FileUploadHelper.SaveFileAsync(
+                _env,
+                brandDto.BrandImage,
+                $"img/brands/{brand.Id}_brand",
+                $"{brand.Id}_frontpage",
+                width: 1000,
+                height: 1000
+            );
+
+            await _context.SaveChangesAsync();
+        }
+
         return _mapper.Map<BrandResponseDto>(brand);
     }
 

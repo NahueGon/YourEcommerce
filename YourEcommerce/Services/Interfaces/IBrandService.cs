@@ -4,8 +4,9 @@ namespace YourEcommerce.Services.Interfaces;
 
 public interface IBrandService
 {
-    Task<List<BrandDto>> GetAll();
-    Task<IEnumerable<BrandDto>> GetAllFlat();
-    Task<BrandDto?> Get(int id);
+    Task<List<BrandDto>> GetAllForTable();
+    Task<BrandUpdateDto?> GetForEdit(int id);
+    Task<BrandDto?> Create(BrandCreateDto brandDto);
+    Task<BrandDto?> Update(int id, BrandUpdateDto brandDto);
     Task<bool> Delete(int id);
 }

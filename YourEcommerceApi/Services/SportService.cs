@@ -46,6 +46,20 @@ public class SportService : ISportService
         _context.Sports.Add(sport);
         await _context.SaveChangesAsync();
 
+        if (sportDto.SportImage != null && sportDto.SportImage.Length > 0)
+        {
+            sport.SportImage = await FileUploadHelper.SaveFileAsync(
+                _env,
+                sportDto.SportImage,
+                $"img/sports/{sport.Id}_sport",
+                $"{sport.Id}_frontpage",
+                width: 1920,
+                height: 1080
+            );
+
+            await _context.SaveChangesAsync();
+        }
+
         return _mapper.Map<SportResponseDto>(sport);
     }
 

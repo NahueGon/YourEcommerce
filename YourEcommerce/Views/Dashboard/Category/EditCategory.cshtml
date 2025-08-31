@@ -1,0 +1,77 @@
+﻿@model YourEcommerce.DTOs.CategoryDtos.CategoryUpdateDto
+@using YourEcommerce.DTOs.CategoryDtos
+
+@{
+    ViewData["Title"] = "Editar Categoria";
+}
+
+<div class="w-full p-4 md:p-8 overflow-auto">
+    <form asp-action="UpdateCategory" asp-controller="Category" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+        <h3 class="text-center sm:text-start text-2xl font-semibold mb-4">@ViewData["Title"]</h3>
+        <div class="w-full flex flex-col md:flex-row gap-4"> 
+            <div class="w-full flex flex-col gap-4 max-w-70 mx-auto md:mx-0">
+                <div class="sm:col-span-2 flex justify-center sm:justify-start">
+                    <div class="relative w-70 h-70 overflow-hidden rounded group cursor-pointer" onclick="triggerFileInput('CategoryImageInput')" >
+                        <img src="@Model.CategoryImageUrl" alt="Foto de categoria" class="w-full h-full object-cover"/>
+                        <div class="absolute inset-0 rounded bg-gradient-to-t from-black/50 via-black/20 to-transparent 
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <span class="text-white font-semibold">Cambiar imagen</span>
+                        </div>
+                    </div>
+                    <input type="file" id="CategoryImageInput" name="CategoryImage" class="hidden" accept="image/*" />
+                </div>
+                <input type="hidden" readonly asp-for="Id" />
+                <div class="relative">
+                    <input asp-for="Name" type="text" class="block px-3 p-2 pt-3 w-full text-sm bg-transparent rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"/>
+                    <label asp-for="Name" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-3 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+                    <span asp-validation-for="Name" class="text-red-500 text-sm"></span>
+                </div>
+                <div class="relative">
+                    <textarea asp-for="Description" rows="2" class="block px-2.5 pb-1.5 pt-3 w-full text-sm bg-transparent rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"></textarea>
+                    <label asp-for="Description" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-2 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+                    <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
+                </div>
+                <div class="sm:col-span-2 flex justify-end">
+                    <button type="submit" class="text-white focus:outline-none focus:ring-4 font-medium rounded-full text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800 cursor-pointer">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function triggerFileInput(inputId) {
+        document.getElementById(inputId).click();
+    }
+
+    function handleImagePreview(inputElement, imgElement) {
+        inputElement.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => imgElement.src = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    const categoryInput = document.getElementById('CategoryImageInput');
+    const categoryImg = document.querySelector('img[alt="Foto de categoria"]');
+    handleImagePreview(categoryInput, categoryImg);
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @{
+        var showSuccessObj = TempData["ShowSuccess"];
+        bool showSuccess = showSuccessObj is bool b && b;
+    }
+
+    @if (showSuccess)
+    {
+        <script>
+            showToast("success", "@TempData["SuccessMessage"]");
+        </script>
+    }
+}

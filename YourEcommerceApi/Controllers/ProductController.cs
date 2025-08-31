@@ -36,7 +36,8 @@ namespace YourEcommerceApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductCreateDto productDto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> CreateProduct([FromForm] ProductCreateDto productDto)
         {
             var created = await _productService.Save(productDto);
             if (created == null) return BadRequest("Categoria, Marca o deporte no encontrados.");

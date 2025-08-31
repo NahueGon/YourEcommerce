@@ -3,5 +3,6 @@ namespace YourEcommerceApi.DTOs.CategoryDtos;
 public class CategoryCreateDto
 {
     public required string Name { get; set; }
-    public string Description { get; set; }  = string.Empty;
+    public string? Description { get; set; } = string.Empty;
+    public IFormFile? CategoryImage { get; set; }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using YourEcommerceApi.DTOs.CategoryDtos;
+using YourEcommerceApi.DTOs.CategoryGender;
 using YourEcommerceApi.Services.Interfaces;
 
 namespace YourEcommerceApi.Controllers
@@ -10,18 +11,20 @@ namespace YourEcommerceApi.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+        private readonly ICategoryGendersService _categoryGenderService;
 
-        public CategoryController(ICategoryService service)
+        public CategoryController(ICategoryService categoryService, ICategoryGendersService categoryGenderService)
         {
-            _categoryService = service;
+            _categoryService = categoryService;
+            _categoryGenderService = categoryGenderService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetCategories()
         {
             var categories = await _categoryService.GetAll();
-            if (categories == null || !categories.Any()) return NotFound("No se encontraron categorias.");
-            
+            if (categories == null || !categories.Any()) return NotFound("No se encontraron Categorias.");
+
             return Ok(categories);
         }
 
@@ -29,31 +32,28 @@ namespace YourEcommerceApi.Controllers
         public async Task<ActionResult<CategoryResponseDto>> GetCategory(int id)
         {
             var category = await _categoryService.Get(id);
-            if (category == null) return NotFound("Categoría no encontrada");
+            if (category == null) return NotFound("Marca no encontrada");
 
             return Ok(category);
         }
 
         [HttpPost]
-        public async Task<ActionResult<CategoryResponseDto>> CreateCategory(CategoryCreateDto categoryDto)
+        public async Task<IActionResult> CreateCategory([FromForm] CategoryCreateDto categoryDto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var responseDto = await _categoryService.Save(categoryDto);
-
-            return CreatedAtAction(nameof(GetCategory), new { id = responseDto.Id }, responseDto);
+            var category = await _categoryService.Save(categoryDto);
+            return Ok(category);
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(int id, CategoryUpdateDto categoryDto)
+        public async Task<ActionResult<CategoryResponseDto>> UpdateCategory(int id, [FromForm] CategoryUpdateDto categoryDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var updated = await _categoryService.Get(id);
-            if (updated == null) return NotFound("Categoría no encontrada");
-            
             var updatedCategory = await _categoryService.Update(id, categoryDto);
-            if (updatedCategory == null) return NotFound("Categoría no encontrada");
+            if (updatedCategory == null) return NotFound("Categoria no encontrada");
 
             return Ok(updatedCategory);
         }
@@ -61,8 +61,8 @@ namespace YourEcommerceApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCategory(int id)
         {
-            var deleted = await _categoryService.Get(id);
-            if (deleted == null) return NotFound("Categoría no encontrada");
+            var category = await _categoryService.Get(id);
+            if (category == null) return NotFound("Categoria no encontrada");
 
             await _categoryService.Delete(id);
 

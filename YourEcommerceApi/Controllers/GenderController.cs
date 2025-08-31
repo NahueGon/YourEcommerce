@@ -35,7 +35,8 @@ namespace YourEcommerceApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GenderResponseDto>> CreateGender(GenderCreateDto genderDto)
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<GenderResponseDto>> CreateGender([FromForm] GenderCreateDto genderDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var responseDto = await _genderService.Save(genderDto);
@@ -58,7 +59,7 @@ namespace YourEcommerceApi.Controllers
             return Ok(updatedGender);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteGender(int id)
         {
             var gender = await _genderService.Get(id);

@@ -35,6 +35,7 @@ namespace YourEcommerceApi.Controllers
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<ActionResult<SportResponseDto>> CreateSport(SportCreateDto sportDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -58,7 +59,7 @@ namespace YourEcommerceApi.Controllers
             return Ok(updatedSport);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSport(int id)
         {
             var sport = await _sportService.Get(id);

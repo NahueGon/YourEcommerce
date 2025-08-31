@@ -7,7 +7,6 @@ using YourEcommerce.ViewModels;
 public class NavBarDashboardViewComponent : ViewComponent
 {
     private readonly IUserService _userService;
-    private const string ApiBaseUrl = "http://192.168.100.11:5076/";
 
     public NavBarDashboardViewComponent(IUserService userService)
     {
@@ -24,15 +23,15 @@ public class NavBarDashboardViewComponent : ViewComponent
 
         var model = new NavbarDashboardViewModel
         {
-            User = new UserViewModel
+            User = new UserResponseDto
             {
                 Id = userDto?.Id ?? 0,
                 Name = userDto?.Name ?? "Usuario",
                 Lastname = userDto?.Lastname ?? "",
                 Email = userDto?.Email ?? "",
-                Role = userDto?.Role ?? "Customer",
+                Role = userDto?.Role ?? UserRole.Customer,
                 ProfileImage = !string.IsNullOrEmpty(userDto?.ProfileImage)
-                    ? ApiBaseUrl + userDto.ProfileImage
+                    ? userDto.ProfileImage
                     : "/img/anonymous-profile.png"
             }
         };

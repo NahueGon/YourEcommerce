@@ -1,0 +1,15 @@
+﻿@model YourEcommerce.ViewModels.TableDashboardViewModel<SportDto>
+@using YourEcommerce.DTOs.SportDtos
+@using YourEcommerce.Helpers
+@{
+    ViewData["Title"] = Model.Title.TranslateToSpanish();
+}
+
+<div class="w-full p-4 md:p-8 overflow-auto">
+    @await Component.InvokeAsync("TableDashboard", new { 
+        title = Model.Title,
+        items = Model.Items,
+        total = Model.TotalItems,
+        url = Model.ApiBaseUrl
+    })
+</div>

@@ -1,73 +1,50 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using AutoMapper;
 using YourEcommerce.DTOs.GenderDtos;
+using YourEcommerce.Repositories.Interfaces;
 using YourEcommerce.Services.Interfaces;
 
 namespace YourEcommerce.Services;
 
 public class GenderService : IGenderService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IGenderRepository _genderRepository;
+    private readonly IMapper _mapper;
 
-    public GenderService(IHttpClientFactory httpClientFactory)
+    public GenderService(IGenderRepository repository, IMapper mapper)
     {
-        _httpClientFactory = httpClientFactory;
+        _genderRepository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<List<GenderDto>> GetAll()
+    public async Task<List<GenderDto>> GetAllForTable()
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync("api/genders");
-
-        if (!response.IsSuccessStatusCode) return new();
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-        };
-
-        var content = await response.Content.ReadAsStringAsync();
-        var genders = JsonSerializer.Deserialize<List<GenderDto>>(content, options);
-
-        return genders ?? new List<GenderDto>();
+        var genders = await _genderRepository.GetAll();
+        return genders.Select(p => _mapper.Map<GenderDto>(p)).ToList();
     }
 
-    public async Task<IEnumerable<GenderDto>> GetAllFlat()
+    public async Task<GenderUpdateDto?> GetForEdit(int id)
     {
-        var genders = await GetAll();
-
-        return genders.Select(g => new GenderDto
-        {
-            Id = g.Id,
-            Name = g.Name,
-            Description = g.Description,
-            GenderImage = g.GenderImage
-        });
+        var gender = await _genderRepository.GetById(id);
+        if (gender is null) return null;
+        return _mapper.Map<GenderUpdateDto>(gender);
     }
 
-    public async Task<GenderDto?> Get(int id)
+    public async Task<GenderDto?> Create(GenderCreateDto genderDto)
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync($"api/genders/{id}");
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var gender = JsonSerializer.Deserialize<GenderDto>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        return gender;
+        var created = await _genderRepository.Create(genderDto);
+        if (created == null) return null;
+        return _mapper.Map<GenderDto>(created);
     }
-    
-    public async Task<bool> Delete(int id)
-    {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.DeleteAsync($"api/genders/{id}");
 
-        return response.IsSuccessStatusCode;
+    public async Task<GenderDto?> Update(int id, GenderUpdateDto genderDto)
+    {
+        var updated = await _genderRepository.Update(id, genderDto);
+        if (updated == null) return null;
+        return _mapper.Map<GenderDto>(updated);
+    }
+
+    public Task<bool> Delete(int id)
+    {
+        return _genderRepository.Delete(id);
     }
 }

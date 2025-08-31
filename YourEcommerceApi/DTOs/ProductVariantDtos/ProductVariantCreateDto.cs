@@ -1,4 +1,5 @@
 using YourEcommerceApi.DTOs.ProductColorDtos;
+using YourEcommerceApi.DTOs.ProductImageDtos;
 
 namespace YourEcommerceApi.DTOs.ProductVariantDtos;
 
@@ -8,4 +9,5 @@ public class ProductVariantCreateDto
     public int Stock { get; set; }
 
     public ICollection<ProductColorCreateDto> Colors { get; set; } = new List<ProductColorCreateDto>();
+    public ICollection<ProductImageCreateDto> Images { get; set; } = new List<ProductImageCreateDto>();
 }

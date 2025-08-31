@@ -4,5 +4,5 @@ namespace YourEcommerce.ViewModels;
 
 public class NavbarDashboardViewModel
 {
-    public UserViewModel? User { get; set; }
+    public UserResponseDto? User { get; set; }
 }

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using YourEcommerce.DTOs.GenderDtos;
 using YourEcommerce.DTOs.UserDtos;
 using YourEcommerce.Services.Interfaces;
 using YourEcommerce.ViewModels;
@@ -7,44 +7,41 @@ using YourEcommerce.ViewModels;
 public class NavbarViewComponent : ViewComponent
 {
     private readonly IProductService _productService;
-    private const string ApiBaseUrl = "http://192.168.100.11:5076/";
+    private readonly IUserService _userService;
 
-    public NavbarViewComponent(IProductService productService)
+    public NavbarViewComponent(IProductService productService, IUserService userService)
     {
         _productService = productService;
+        _userService = userService;
     }
 
    public async Task<IViewComponentResult> InvokeAsync()
     {
         var model = new NavbarViewModel();
-        var user = HttpContext.User;
-        var products = await _productService.GetAll();
-        var allGenders = products
-            .Select(p => p.Gender)      // ahora p.Gender es GenderViewModel
-            .Where(g => g != null)
-            .Distinct()
-            .ToList();
+        
+        var products = await _productService.GetAllForTable();
 
         var usedGenders = products
             .Where(p => p.Gender != null)
-            .Select(p => p.Gender!)
+            .Select(p => new GenderDto
+            {
+                Id = p.Gender.Id,
+                Name = p.Gender.Name
+            })
             .DistinctBy(g => g.Id)
             .ToList();
 
         model.Genders = usedGenders;
 
-        if (user.Identity != null && user.Identity.IsAuthenticated)
+        if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
         {
-            model.User = new UserViewModel
+            var currentUser = await _userService.GetCurrent(HttpContext.User);
+            
+            model.User = currentUser ?? new UserResponseDto
             {
-                Id = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0"),
-                Name = user.FindFirst(ClaimTypes.Name)?.Value ?? "Usuario",
-                Lastname = user.FindFirst(ClaimTypes.Surname)?.Value ?? "",
-                Email = user.FindFirst(ClaimTypes.Email)?.Value ?? "",
-                Role = user.FindFirst(ClaimTypes.Role)?.Value ?? "Customer",
-                ProfileImage = !string.IsNullOrEmpty(user.FindFirst("ProfileImage")?.Value)
-                    ? ApiBaseUrl + user.FindFirst("ProfileImage")?.Value
-                    : "",
+                Name = "Usuario",
+                Role = UserRole.Customer,
+                ProfileImage = "/img/anonymous-profile.png"
             };
         }
     

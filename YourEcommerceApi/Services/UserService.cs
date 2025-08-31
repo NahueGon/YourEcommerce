@@ -82,13 +82,16 @@ public class UserService : IUserService
 
         if (!string.IsNullOrWhiteSpace(userDto.Address) && userDto.Address != currentUser.Address)
             currentUser.Address = userDto.Address;
+            
+        if (userDto.Role.HasValue && userDto.Role.Value != currentUser.Role)
+            currentUser.Role = userDto.Role.Value;
 
         if (!string.IsNullOrWhiteSpace(userDto.CurrentPassword) && !string.IsNullOrWhiteSpace(userDto.NewPassword))
         {
             var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(currentUser, currentUser.Password!, userDto.CurrentPassword);
-            
+
             if (passwordVerificationResult == PasswordVerificationResult.Failed)
-                return null; 
+                return null;
 
             currentUser.Password = _passwordHasher.HashPassword(currentUser, userDto.NewPassword);
         }

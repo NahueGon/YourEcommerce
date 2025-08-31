@@ -1,0 +1,11 @@
+﻿@if (TempData["Notification.Message"] != null)
+{
+    var type = TempData["Notification.Type"]?.ToString() ?? "info";
+    var message = TempData["Notification.Message"]?.ToString() ?? "";
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            showToast("@type", "@message");
+        });
+    </script>
+}

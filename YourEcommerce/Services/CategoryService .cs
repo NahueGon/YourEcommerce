@@ -1,73 +1,50 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using AutoMapper;
 using YourEcommerce.DTOs.CategoryDtos;
+using YourEcommerce.Repositories.Interfaces;
 using YourEcommerce.Services.Interfaces;
 
 namespace YourEcommerce.Services;
 
 public class CategoryService : ICategoryService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IMapper _mapper;
 
-    public CategoryService(IHttpClientFactory httpClientFactory)
+    public CategoryService(ICategoryRepository repository, IMapper mapper)
     {
-        _httpClientFactory = httpClientFactory;
+        _categoryRepository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<List<CategoryDto>> GetAll()
+    public async Task<List<CategoryDto>> GetAllForTable()
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync("api/categories");
-
-        if (!response.IsSuccessStatusCode) return new();
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-        };
-
-        var content = await response.Content.ReadAsStringAsync();
-        var categories = JsonSerializer.Deserialize<List<CategoryDto>>(content, options);
-
-        return categories ?? new List<CategoryDto>();
+        var categories = await _categoryRepository.GetAll();
+        return categories.Select(s => _mapper.Map<CategoryDto>(s)).ToList();
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetAllFlat()
+    public async Task<CategoryUpdateDto?> GetForEdit(int id)
     {
-        var categories = await GetAll();
-
-        return categories.Select(c => new CategoryDto
-        {
-            Id = c.Id,
-            Name = c.Name,
-            Description = c.Description,
-            CategoryImage = c.CategoryImage
-        });
+        var category = await _categoryRepository.GetById(id);
+        if (category is null) return null;
+        return _mapper.Map<CategoryUpdateDto>(category);
     }
 
-    public async Task<CategoryDto?> Get(int id)
+    public async Task<CategoryDto?> Create(CategoryCreateDto categoryDto)
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync($"api/categories/{id}");
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var category = JsonSerializer.Deserialize<CategoryDto>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        return category;
+        var created = await _categoryRepository.Create(categoryDto);
+        if (created == null) return null;
+        return _mapper.Map<CategoryDto>(created);
     }
-    
-    public async Task<bool> Delete(int id)
-    {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.DeleteAsync($"api/categories/{id}");
 
-        return response.IsSuccessStatusCode;
+    public async Task<CategoryDto?> Update(int id, CategoryUpdateDto categoryDto)
+    {
+        var updated = await _categoryRepository.Update(id, categoryDto);
+        if (updated == null) return null;
+        return _mapper.Map<CategoryDto>(updated);
+    }
+
+    public Task<bool> Delete(int id)
+    {
+        return _categoryRepository.Delete(id);
     }
 }

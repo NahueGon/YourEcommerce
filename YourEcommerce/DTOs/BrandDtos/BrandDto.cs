@@ -8,10 +8,12 @@ public class BrandDto
 
     [Display(Name = "Nombre")]
     public string Name { get; set; } = string.Empty;
-
+    
     [Display(Name = "Descripción")]
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; } = string.Empty;
 
     [Display(Name = "Portada")]
     public string? BrandImage { get; set; } = "/img/anonymous-profile.png";
+
+    public override string ToString() => Name;
 }

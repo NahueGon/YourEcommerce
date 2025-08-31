@@ -1,73 +1,50 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using AutoMapper;
 using YourEcommerce.DTOs.SportDtos;
+using YourEcommerce.Repositories.Interfaces;
 using YourEcommerce.Services.Interfaces;
 
 namespace YourEcommerce.Services;
 
 public class SportService : ISportService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ISportRepository _sportRepository;
+    private readonly IMapper _mapper;
 
-    public SportService(IHttpClientFactory httpClientFactory)
+    public SportService(ISportRepository repository, IMapper mapper)
     {
-        _httpClientFactory = httpClientFactory;
+        _sportRepository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<List<SportDto>> GetAll()
+    public async Task<List<SportDto>> GetAllForTable()
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync("api/sports");
-
-        if (!response.IsSuccessStatusCode) return new();
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-        };
-
-        var content = await response.Content.ReadAsStringAsync();
-        var sports = JsonSerializer.Deserialize<List<SportDto>>(content, options);
-
-        return sports ?? new List<SportDto>();
+        var sports = await _sportRepository.GetAll();
+        return sports.Select(s => _mapper.Map<SportDto>(s)).ToList();
     }
 
-    public async Task<IEnumerable<SportDto>> GetAllFlat()
+    public async Task<SportUpdateDto?> GetForEdit(int id)
     {
-        var sports = await GetAll();
-
-        return sports.Select(s => new SportDto
-        {
-            Id = s.Id,
-            Name = s.Name,
-            Description = s.Description,
-            SportImage = s.SportImage
-        });
+        var sport = await _sportRepository.GetById(id);
+        if (sport is null) return null;
+        return _mapper.Map<SportUpdateDto>(sport);
     }
 
-    public async Task<SportDto?> Get(int id)
+    public async Task<SportDto?> Create(SportCreateDto sportDto)
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync($"api/sports/{id}");
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var sport = JsonSerializer.Deserialize<SportDto>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        return sport;
+        var created = await _sportRepository.Create(sportDto);
+        if (created == null) return null;
+        return _mapper.Map<SportDto>(created);
     }
-    
-    public async Task<bool> Delete(int id)
-    {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.DeleteAsync($"api/sports/{id}");
 
-        return response.IsSuccessStatusCode;
+    public async Task<SportDto?> Update(int id, SportUpdateDto sportDto)
+    {
+        var updated = await _sportRepository.Update(id, sportDto);
+        if (updated == null) return null;
+        return _mapper.Map<SportDto>(updated);
+    }
+
+    public Task<bool> Delete(int id)
+    {
+        return _sportRepository.Delete(id);
     }
 }

@@ -14,10 +14,4 @@ public class ProductViewModel
     public BrandViewModel Brand { get; set; } = new();
     public GenderViewModel Gender { get; set; } = new();
     public ICollection<ProductTagViewModel> ProductTags { get; set; } = new List<ProductTagViewModel>();
-
-    public string CategoryName => Category?.Name ?? "-";
-    public string SportName => Sport?.Name ?? "-";
-    public string BrandName => Brand?.Name ?? "-";
-    public string GenderName => Gender?.Name ?? "-";
-    public string ProductTagsNames => string.Join(", ", ProductTags.Select(t => t.Tag.Name));
 }

@@ -14,8 +14,10 @@ public class AppDbContext : DbContext
     // Products
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductVariant> ProductVariants { get; set; }
-    public DbSet<ProductColor> ProductColors{ get; set; }
+    public DbSet<ProductColor> ProductColors { get; set; }
+    public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<CategoryGender> CategoryGenders { get; set; }
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Gender> Genders { get; set; }
     public DbSet<Sport> Sports { get; set; }

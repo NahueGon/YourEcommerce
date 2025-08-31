@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourEcommerceApi.Context;
 using YourEcommerceApi.DTOs.GenderDtos;
@@ -45,6 +46,20 @@ public class GenderService : IGenderService
 
         _context.Genders.Add(gender);
         await _context.SaveChangesAsync();
+
+        if (genderDto.GenderImage != null && genderDto.GenderImage.Length > 0)
+        {
+            gender.GenderImage = await FileUploadHelper.SaveFileAsync(
+                _env,
+                genderDto.GenderImage,
+                $"img/genders/{gender.Id}_gender",
+                $"{gender.Id}_frontpage",
+                width: 630,
+                height: 830
+            );
+
+            await _context.SaveChangesAsync();
+        }
 
         return _mapper.Map<GenderResponseDto>(gender);
     }

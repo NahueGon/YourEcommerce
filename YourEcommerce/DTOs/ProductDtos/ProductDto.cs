@@ -1,4 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using YourEcommerce.DTOs.BrandDtos;
+using YourEcommerce.DTOs.CategoryDtos;
+using YourEcommerce.DTOs.GenderDtos;
+using YourEcommerce.DTOs.ProductTagDtos;
+using YourEcommerce.DTOs.SportDtos;
 
 namespace YourEcommerce.DTOs.ProductDtos;
 
@@ -18,18 +23,20 @@ public class ProductDto
     [Display(Name = "Stock")]
     public int TotalStock { get; set; }
 
+    [Display(Name = "Producto Activo")]
+    public bool IsActive { get; set; }
+    
+
     [Display(Name = "Categoria")]
-    public string? Category { get; set; } = "-";
+    public CategoryDto Category { get; set; } = new();
 
     [Display(Name = "Deporte")]
-    public string? Sport { get; set; } = "-";
+    public SportDto Sport { get; set; } = new();
 
     [Display(Name = "Marca")]
-    public string? Brand { get; set; } = "-";
+    public BrandDto Brand { get; set; } = new();
 
     [Display(Name = "Genero")]
-    public string? Gender { get; set; } = "-";
-
-    [Display(Name = "Etiquetas")]
-    public string? ProductTags { get; set; } = string.Empty;
+    public GenderDto Gender { get; set; } = new();
+    public ICollection<ProductTagResponseDto> ProductTags { get; set; } = new List<ProductTagResponseDto>();
 }

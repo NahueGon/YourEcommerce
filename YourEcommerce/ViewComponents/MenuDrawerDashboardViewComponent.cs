@@ -14,9 +14,9 @@ public class MenuDrawerDashboardViewComponent : ViewComponent
     public async Task<IViewComponentResult> InvokeAsync()
     {
         var model = new MenuDrawerViewModel();
-        var products = await _productService.GetAll();
+        var products = await _productService.GetAllForTable();
         var allGenders = products
-            .Select(p => p.Gender)      // ahora p.Gender es GenderViewModel
+            .Select(p => p.Gender)
             .Where(g => g != null)
             .Distinct()
             .ToList();

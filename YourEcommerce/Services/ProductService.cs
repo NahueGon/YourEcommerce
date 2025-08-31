@@ -1,80 +1,50 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using AutoMapper;
 using YourEcommerce.DTOs.ProductDtos;
+using YourEcommerce.Repositories.Interfaces;
 using YourEcommerce.Services.Interfaces;
-using YourEcommerce.ViewModels;
 
 namespace YourEcommerce.Services;
 
 public class ProductService : IProductService
 {
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IProductRepository _productRepository;
+    private readonly IMapper _mapper;
 
-    public ProductService(IHttpClientFactory httpClientFactory)
+    public ProductService(IProductRepository repository, IMapper mapper)
     {
-        _httpClientFactory = httpClientFactory;
+        _productRepository = repository;
+        _mapper = mapper;
     }
 
-    public async Task<List<ProductViewModel>> GetAll()
+    public async Task<List<ProductDto>> GetAllForTable()
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.GetAsync("api/products");
-
-        if (!response.IsSuccessStatusCode) return new List<ProductViewModel>();
-
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
-        };
-        var content = await response.Content.ReadAsStringAsync();
-
-        var products = JsonSerializer.Deserialize<List<ProductViewModel>>(content, options);
-
-        return products ?? new List<ProductViewModel>();
+        var sports = await _productRepository.GetAll();
+        return sports.Select(s => _mapper.Map<ProductDto>(s)).ToList();
     }
 
-    public async Task<IEnumerable<ProductDto>> GetAllFlat()
+    public async Task<ProductUpdateDto?> GetForEdit(int id)
     {
-        var products = await GetAll() ?? new List<ProductViewModel>();
-
-        return products.Select(p => new ProductDto
-        {
-            Id = p.Id,
-            Name = p.Name,
-            Description = p.Description,
-            Price = p.Price,
-            TotalStock = p.TotalStock,
-            Category = p.Category?.Name,
-            Sport = p.Sport?.Name,
-            Brand = p.Brand?.Name,
-            Gender = p.Gender?.Name,
-            ProductTags = string.Join(", ", p.ProductTags.Select(t => t.Tag.Name))
-        }).ToList();
+        var product = await _productRepository.GetById(id);
+        if (product is null) return null;
+        return _mapper.Map<ProductUpdateDto>(product);
     }
 
-    public async Task<ProductViewModel?> Get(int id)
+    public async Task<ProductDto?> Create(ProductCreateDto productDto)
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.DeleteAsync($"api/products/{id}");
-
-        if (!response.IsSuccessStatusCode) return null;
-
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        var product = JsonSerializer.Deserialize<ProductViewModel>(responseContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        return product;
+        var created = await _productRepository.Create(productDto);
+        if (created == null) return null;
+        return _mapper.Map<ProductDto>(created);
     }
     
-    public async Task<bool> Delete(int id)
+    public async Task<ProductDto?> Update(int id, ProductUpdateDto productDto)
     {
-        var httpClient = _httpClientFactory.CreateClient("YourEcommerceApi");
-        var response = await httpClient.DeleteAsync($"api/products/{id}");
+        var updated = await _productRepository.Update(id, productDto);
+        if (updated == null) return null;
+        return _mapper.Map<ProductDto>(updated);
+    }
 
-        return response.IsSuccessStatusCode;
+    public Task<bool> Delete(int id)
+    {
+        return _productRepository.Delete(id);
     }
 }

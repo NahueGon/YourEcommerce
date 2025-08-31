@@ -1,12 +1,12 @@
 using YourEcommerce.DTOs.ProductDtos;
-using YourEcommerce.ViewModels;
 
 namespace YourEcommerce.Services.Interfaces;
 
 public interface IProductService
 {
-    Task<List<ProductViewModel>> GetAll();
-    Task<IEnumerable<ProductDto>> GetAllFlat();
-    Task<ProductViewModel?> Get(int id);
+    Task<List<ProductDto>> GetAllForTable();
+    Task<ProductUpdateDto?> GetForEdit(int id);
+    Task<ProductDto?> Create(ProductCreateDto productDto);
+    Task<ProductDto?> Update(int id, ProductUpdateDto productDto);
     Task<bool> Delete(int id);
 }

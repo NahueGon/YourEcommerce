@@ -18,7 +18,9 @@ public class ProductVariantService : IProductVariantService
 
     public async Task<IEnumerable<ProductVariantResponseDto>> GetAll()
     {
-        var productVariants = await _context.ProductVariants
+         var productVariants = await _context.ProductVariants
+            .Include(pv => pv.Colors)
+            .Include(pv => pv.Images)
             .ToListAsync();
 
         return productVariants.Select(pv => pv.ToDto()).ToList();
@@ -27,6 +29,8 @@ public class ProductVariantService : IProductVariantService
     public async Task<ProductVariantResponseDto?> Get(int id)
     {
         var productVariant = await _context.ProductVariants
+            .Include(pv => pv.Colors)
+            .Include(pv => pv.Images)
             .FirstOrDefaultAsync(pv => pv.Id == id);
         if (productVariant == null) return null;
 

@@ -25,14 +25,17 @@ builder.Services.AddAutoMapper(
     typeof(BrandProfile),
     typeof(GenderProfile),
     typeof(CategoryProfile),
+    typeof(CategoryGendersProfile),
     typeof(SportProfile)
 );
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ICategoryGendersService, CategoryGendersService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IGenderService, GenderService>();

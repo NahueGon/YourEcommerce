@@ -1,4 +1,6 @@
 
+using YourEcommerceApi.Models.Users;
+
 namespace YourEcommerceApi.DTOs.UserDtos;
 
 public class UserUpdateDto
@@ -10,5 +12,6 @@ public class UserUpdateDto
     public string? NewPassword { get; set; }    
     public string? PhoneNumber { get; set; }
     public string? Address { get; set; }
+    public UserRole? Role { get; set; }
     public IFormFile? ProfileImage { get; set; }
 }

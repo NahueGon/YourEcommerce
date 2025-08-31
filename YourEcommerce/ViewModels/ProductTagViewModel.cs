@@ -2,5 +2,6 @@ namespace YourEcommerce.ViewModels;
 
 public class ProductTagViewModel
 {
-    public TagViewModel Tag { get; set; }  = new TagViewModel();
+    public int TagId { get; set; }
+    public TagViewModel Tag { get; set; } = new TagViewModel();
 }

@@ -5,10 +5,12 @@ namespace YourEcommerce.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<IEnumerable<UserViewModel>> GetAll();
-    Task<UserViewModel?> Get(int id);
-    Task<UserViewModel?> GetCurrent(ClaimsPrincipal user);
-    Task<UserViewModel?> GetByEmail(string email);
-    Task<UserViewModel?> Update(int id, UserUpdateViewModel userDto);
+    Task<UserResponseDto?> Get(int id);
+    Task<UserResponseDto?> GetByEmail(string email);
+    Task<List<UserDto>> GetAllForTable();
+    Task<UserUpdateDto?> GetForEdit(int id);
+    Task<UserResponseDto?> GetCurrent(ClaimsPrincipal claimsPrincipal);
+    Task<UserDto?> Create(UserCreateDto userDto);
+    Task<UserDto?> Update(int id, UserUpdateDto userDto);
     Task<bool> Delete(int id);
 }

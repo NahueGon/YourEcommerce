@@ -1,0 +1,83 @@
+﻿@model YourEcommerce.DTOs.UserDtos.UserUpdateDto
+@using YourEcommerce.DTOs.UserDtos
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<div class="w-full p-4 md:p-8 overflow-auto">
+    <form asp-action="UpdateUser" asp-controller="User" asp-route-id="@Model.Id"  method="post" enctype="multipart/form-data" class="grid grid-cols-1 w-full max-w-70 sm:max-w-xl sm:grid-cols-2 gap-4 mx-auto sm:mx-0">
+        <h3 class="sm:col-span-2 text-2xl font-semibold">@ViewData["Title"]</h3>
+        <div class="sm:col-span-2 flex justify-center sm:justify-start">
+            <div class="relative max-w-70 group cursor-pointer" onclick="triggerFileInput('ProfileImageInput')" >
+                <img src="@Model.ProfileImageUrl" alt="Foto de perfil" class="w-full rounded shadow"/>
+                <div class="absolute inset-0 rounded bg-gradient-to-t from-black/50 via-black/20 to-transparent 
+                opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <span class="text-white font-semibold">Cambiar foto</span>
+                </div>
+            </div>
+            <input type="file" id="ProfileImageInput" name="ProfileImage" class="hidden" accept="image/*" />
+        </div>
+        <input type="hidden" readonly asp-for="Id" />
+        <div class="relative">
+            <input asp-for="Name" type="text" class="block px-3 p-2 pt-3 w-full text-sm bg-transparent rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"/>
+            <label asp-for="Name" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-3 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+            <span asp-validation-for="Name" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="relative">
+            <input asp-for="Lastname" type="text" class="block px-3 p-2 pt-3 w-full text-sm bg-transparent rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"/>
+            <label asp-for="Lastname" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-3 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+            <span asp-validation-for="Lastname" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="relative">
+            <input asp-for="Email" type="email" class="block px-3 p-2 pt-3 w-full text-sm bg-transparent rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"/>
+            <label asp-for="Email" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-3 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+            <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="relative">
+            <input asp-for="PhoneNumber" type="text" class="block px-3 p-2 pt-3 w-full text-sm bg-transparent rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"/>
+            <label asp-for="PhoneNumber" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-3 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+            <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="relative">
+            <input asp-for="Address" type="text" class="block px-3 p-2 pt-3 w-full text-sm bg-transparent rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"/>
+            <label asp-for="Address" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-3 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+            <span asp-validation-for="Address" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="relative">
+            <select asp-for="Role" asp-items="Html.GetEnumSelectList<UserRole>()" class="block px-3 p-2 pt-3 w-full text-sm bg-neutral-950 rounded-lg border-1 appearance-none text-white border-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-0 peer"></select>
+            <label asp-for="Role" class="absolute text-sm text-neutral-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-950 px-3 peer-focus:px-2 peer-focus:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"></label>
+            <span asp-validation-for="Role" class="text-red-500 text-sm"></span>
+        </div>
+        <div class="sm:col-span-2 flex justify-end">
+            <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer">Guardar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function triggerFileInput(inputId) {
+        document.getElementById(inputId).click();
+    }
+
+    const profileInput = document.getElementById('ProfileImageInput');
+    const profileImg = document.querySelector('img[alt="Foto de perfil"]');
+
+    profileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onload = e => profileImg.src = e.target.result;
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

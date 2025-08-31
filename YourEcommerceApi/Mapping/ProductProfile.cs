@@ -23,11 +23,14 @@ public class ProductProfile : Profile
         CreateMap<ProductUpdateDto, Product>();
 
         // Variants
-        CreateMap<ProductVariant, ProductVariantDto>();
+        CreateMap<ProductVariant, ProductVariantDto>()
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
         CreateMap<ProductVariantDto, ProductVariant>()
-            .ForMember(dest => dest.Colors, opt => opt.MapFrom(src => src.Colors));
+            .ForMember(dest => dest.Colors, opt => opt.MapFrom(src => src.Colors))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
         CreateMap<ProductVariantCreateDto, ProductVariant>()
-            .ForMember(dest => dest.Colors, opt => opt.MapFrom(src => src.Colors));
+            .ForMember(dest => dest.Colors, opt => opt.MapFrom(src => src.Colors))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
 
         // Attributes
         CreateMap<ProductAttribute, ProductAttributeDto>();

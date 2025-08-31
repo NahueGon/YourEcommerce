@@ -1,14 +1,49 @@
 ﻿@model YourEcommerce.ViewModels.TableDashboardViewModel<dynamic>
 @using System.ComponentModel.DataAnnotations
+@using System.Collections
+@using YourEcommerce.DTOs.CategoryGendersDtos
 @using YourEcommerce.ViewModels
+@using YourEcommerce.Helpers
 
 @{
     var properties = Model.GetOrderedProperties();
+    var routeName = Model.Title?.ToLower() switch
+        {
+            "users" => "EditUser",
+            "products" => "EditProduct",
+            "categories" => "EditCategory",
+            "genders" => "EditGender",
+            "brands" => "EditBrand",
+            "sports" => "EditSport",
+            _ => ""
+        };
+
+    var createRouteName = Model.Title?.ToLower() switch
+    {
+        "users" => "CreateUser",
+        "products" => "CreateProduct",
+        "categories" => "CreateCategory",
+        "genders" => "CreateGender",
+        "brands" => "CreateBrand",
+        "sports" => "CreateSport",
+        _ => ""
+    };
+
+    var deleteRouteName = Model.Title?.ToLower() switch
+    {
+        "users" => "DeleteUser",
+        "products" => "DeleteProduct",
+        "categories" => "DeleteCategory",
+        "genders" => "DeleteGender",
+        "brands" => "DeleteBrand",
+        "sports" => "DeleteSport",
+        _ => ""
+    };
 }
 
 <div class="relative shadow-md w-full">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4">
-        <h3 class="text-2xl font-semibold">@Model.Title</h3>
+        <h3 class="text-2xl font-semibold">@Model.Title.TranslateToSpanish()</h3>
         <label for="table-search" class="sr-only">Search</label>
         <div class="relative w-full sm:w-80">
             <div class="absolute inset-y-0 left-0 rtl:inset-r-0 rtl:right-0 flex items-center ps-3 pointer-events-none">
@@ -16,11 +51,17 @@
             </div>
             <input type="text" id="table-search"
                 class="w-full block p-2 ps-10 text-sm border rounded-lg bg-neutral-700 border-neutral-600 placeholder-neutral-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Buscar por @Model.Title">
+                placeholder="Buscar por @Model.Title.TranslateToSpanish().ToSingular()">
         </div>
     </div>
     <div class="relative overflow-x-auto rounded-lg">
-        <p class="font-medium mb-2">Total @Model.TotalItems</p>
+        <div class="w-full flex justify-between mb-2">
+            <span class="font-medium">Total @Model.TotalItems</span>
+            <a asp-route="@createRouteName"
+                class="text-white focus:ring-4 font-medium rounded-lg text-sm px-5 py-2 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-blue-800 cursor-pointer">
+                Crear @Model.Title.TranslateToSpanish().ToSingular()
+            </a>
+        </div>
         @if (Model.Items != null && Model.Items.Any())
         {
             <table class="w-full text-sm text-left text-neutral-400">
@@ -49,22 +90,59 @@
                                 <th scope="row" class="px-4 py-2 text-xs font-medium text-white">
                                     @if (prop.Name.EndsWith("Image"))
                                     {
-                                        var imgPath = prop.GetValue(item)?.ToString() ?? "/img/anonymous-profile.png";
+                                        var imgPath = prop.GetValue(item)?.ToString() ?? "img/anonymous-profile.png";
+                                        <div class="relative w-25 h-25 overflow-hidden rounded cursor-pointer">
+                                            <img src="@imgPath" alt="Profile Image" class="w-full h-full object-cover" />
+                                        </div>
+                                    }
+                                    else if(prop.Name.EndsWith("Genders"))
+                                    {
+                                        var genders = prop.GetValue(item);
 
-                                        <img src="@imgPath" 
-                                            alt="Profile Image" 
-                                            class="w-full min-w-16 max-w-22 rounded-lg" />
+                                        <table class="w-full text-center text-white">
+                                            <thead class="text-xs">
+                                                <tr>
+                                                    @foreach (var gender in genders)
+                                                    {
+                                                        <th scope="col" class="px-4 py-2">@gender.GenderName</th>
+                                                    }
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="bg-neutral-800 hover:bg-neutral-600">
+                                                    @foreach (var gender in genders)
+                                                    {
+                                                        <th scope="row" class="px-4 py-2 text-xs font-medium text-white">
+                                                            <img src="@($"{gender.CategoryGenderImage}")" alt="@gender.GenderName" class="w-full min-w-16 max-w-16 rounded-lg mx-auto" />
+                                                        </th>
+                                                    }
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     }
                                     else
                                     {
-                                        @prop.GetValue(item)
+                                        var value = prop.GetValue(item);
+
+                                        if (value is IEnumerable enumerable && !(value is string))
+                                        {
+                                            @enumerable.ToNamesString()
+                                        }
+                                        else
+                                        {
+                                            @value
+                                        }
                                     }
                                 </th>
                             }
                             <td class="w-4 px-3 py-2 space-y-2">
-                                <button type="button" class="w-full border focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 focus:ring-blue-800 cursor-pointer">Editar</button>
-                                <form asp-controller="Dashboard" asp-action="DeleteUser" asp-route-id="@item.Id" method="post" class="inline">
-                                    <button type="submit" class="w-full border focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center border-red-500 text-red-500 hover:text-white hover:bg-red-600 focus:ring-red-900 cursor-pointer">Borrar</button>
+                                <a asp-route="@routeName"
+                                    asp-route-id="@item.Id"
+                                    class="w-full border focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-1 text-center border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 focus:ring-blue-800 cursor-pointer block ">
+                                    Editar
+                                </a>
+                                <form asp-route="@deleteRouteName" asp-route-id="@item.Id" method="post" class="inline">
+                                    <button type="submit" class="w-full border focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-3 py-1 text-center border-red-500 text-red-500 hover:text-white hover:bg-red-600 focus:ring-red-900 cursor-pointer block ">Borrar</button>
                                 </form>
                             </td>
                         </tr>
@@ -74,7 +152,7 @@
         }
         else
         {
-            <p>No hay datos para mostrar.</p>
+            <p>No hay @Model.Title.TranslateToSpanish() para mostrar.</p>
         }
     </div>
 </div>

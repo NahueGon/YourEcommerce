@@ -20,6 +20,8 @@
             @RenderBody()
         </main>
 
+        @await Html.PartialAsync("_Notification")
+
         <script src="https://unpkg.com/lucide@latest"></script>
         <script>
             lucide.createIcons();
@@ -28,7 +30,10 @@
         <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
         <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.js"></script>
         <script src="~/js/flowbite.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="~/js/theme-toggle.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/imagePreview.js"></script>
         @await RenderSectionAsync("Scripts", required: false)
     </body>
 </html>

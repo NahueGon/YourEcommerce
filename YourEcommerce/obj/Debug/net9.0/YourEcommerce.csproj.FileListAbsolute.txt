@@ -56,4 +56,9 @@ C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\0uey5
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\1dycqk8llq-lgtwmgsrzm.gz
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\b2w6z47wc6-qnoz41wkdk.gz
 C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\pxm2hjo2q7-qm3gw6zny7.gz
-C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\ppk931a01q-012hl7egfi.gz
+C:\projects\dotnet\YourEcommerce\YourEcommerce\bin\Debug\net9.0\AutoMapper.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\YourEcommerce.csproj.AssemblyReference.cache
+C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\YourEcom.8519FD10.Up2Date
+C:\projects\dotnet\YourEcommerce\YourEcommerce\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\ppk931a01q-i70igxbt2i.gz
+C:\projects\dotnet\YourEcommerce\YourEcommerce\obj\Debug\net9.0\compressed\omf1odv2im-9e28vhmiqa.gz

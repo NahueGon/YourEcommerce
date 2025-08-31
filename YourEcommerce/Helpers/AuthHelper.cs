@@ -7,7 +7,7 @@ namespace YourEcommerce.Helpers;
 
 public static class AuthHelper
 {
-    public static async Task RefreshUserClaims(HttpContext httpContext, UserViewModel user)
+    public static async Task RefreshUserClaims(HttpContext httpContext, UserResponseDto user)
     {
         var claims = new List<Claim>
         {
@@ -17,7 +17,7 @@ public static class AuthHelper
             new Claim(ClaimTypes.MobilePhone, user.PhoneNumber ?? ""),
             new Claim(ClaimTypes.StreetAddress, user.Address ?? ""),
             new Claim(ClaimTypes.Email, user.Email ?? ""),
-            new Claim(ClaimTypes.Role, user.Role ?? "Customer"),
+            new Claim(ClaimTypes.Role, (user.Role ?? UserRole.Customer).ToString()),
             new Claim("ProfileImage", user.ProfileImage ?? "")
         };
 

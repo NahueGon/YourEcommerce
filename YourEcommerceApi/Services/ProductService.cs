@@ -34,6 +34,8 @@ public class ProductService : IProductService
             .Include(p => p.ProductAttributes)
             .Include(p => p.ProductVariants)
                 .ThenInclude(v => v.Colors)
+            .Include(p => p.ProductVariants)
+                .ThenInclude(v => v.Images) 
             .ToListAsync();
 
         return _mapper.Map<List<ProductResponseDto>>(products);
@@ -51,6 +53,8 @@ public class ProductService : IProductService
             .Include(p => p.ProductAttributes)
             .Include(p => p.ProductVariants)
                 .ThenInclude(v => v.Colors)
+            .Include(p => p.ProductVariants)
+                .ThenInclude(v => v.Images)
             .FirstOrDefaultAsync(p => p.Id == id);
         if (product == null) return null;
 
@@ -61,53 +65,55 @@ public class ProductService : IProductService
     {
         var product = _mapper.Map<Product>(productDto);
 
-        Brand? brand = null;
-        Gender? gender = null;
-        Sport? sport = null;
-        Category? category = null;
-
         if (productDto.CategoryId is > 0)
         {
-            category = await _context.Categories.FindAsync(productDto.CategoryId)
+            var category = await _context.Categories.FindAsync(productDto.CategoryId)
                 ?? throw new Exception("Categoria no encontrada.");
         }
 
         if (productDto.BrandId is > 0)
         {
-            brand = await _context.Brands.FindAsync(productDto.BrandId)
+            var brand = await _context.Brands.FindAsync(productDto.BrandId)
                 ?? throw new Exception("Marca no encontrada.");
         }
 
         if (productDto.GenderId is > 0)
         {
-            gender = await _context.Genders.FindAsync(productDto.GenderId)
+            var gender = await _context.Genders.FindAsync(productDto.GenderId)
                 ?? throw new Exception("Genero no encontrado.");
         }
 
         if (productDto.SportId is > 0)
         {
-            sport = await _context.Sports.FindAsync(productDto.SportId)
+            var sport = await _context.Sports.FindAsync(productDto.SportId)
                 ?? throw new Exception("Deporte no encontrado.");
         }
 
         product.ProductTags = new List<ProductTag>();
         foreach (var tagDto in productDto.ProductTags)
         {
-            var existingTag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == tagDto.Name && t.Group == tagDto.Group);
+            var existingTag = await _context.Tags
+                .FirstOrDefaultAsync(t => t.Name == tagDto.Name && t.Group == tagDto.Group);
             var tag = existingTag ?? new Tag { Name = tagDto.Name, Group = tagDto.Group };
 
-            if (existingTag == null)
-                _context.Tags.Add(tag);
+            if (existingTag == null) _context.Tags.Add(tag);
 
             product.ProductTags.Add(new ProductTag { Tag = tag });
         }
 
-        foreach(var variant in product.ProductVariants)
+        foreach (var variant in product.ProductVariants)
         {
-            Console.WriteLine($"Variant Size: {variant.Size}, Stock: {variant.Stock}");
             if (variant.Stock <= 0)
-            {
                 throw new Exception($"Stock inválido para variante tamaño {variant.Size}. Valor: {variant.Stock}");
+
+            foreach (var color in variant.Colors)
+            {
+                color.ProductVariant = variant;
+            }
+
+            foreach (var image in variant.Images)
+            {
+                image.ProductVariant = variant;
             }
         }
 
@@ -122,6 +128,8 @@ public class ProductService : IProductService
         var product = await _context.Products
             .Include(p => p.ProductVariants)
                 .ThenInclude(pv => pv.Colors)
+            .Include(p => p.ProductVariants)
+                .ThenInclude(pv => pv.Images)
             .Include(p => p.ProductAttributes)
             .Include(p => p.ProductTags)
             .FirstOrDefaultAsync(p => p.Id == id);
@@ -157,6 +165,7 @@ public class ProductService : IProductService
             .Include(p => p.Gender)
             .Include(p => p.Sport)
             .Include(p => p.ProductVariants).ThenInclude(pv => pv.Colors)
+            .Include(p => p.ProductVariants).ThenInclude(pv => pv.Images)
             .Include(p => p.ProductAttributes)
             .Include(p => p.ProductTags).ThenInclude(pt => pt.Tag)
             .FirstOrDefaultAsync(p => p.Id == id);
@@ -203,6 +212,8 @@ public class ProductService : IProductService
             variant.ProductId = productId;
             _context.ProductVariants.Add(variant);
         }
+
+        await _context.SaveChangesAsync();
     }
 
     private async Task UpdateAttributes(int productId, ICollection<ProductAttributeDto> attributes)
